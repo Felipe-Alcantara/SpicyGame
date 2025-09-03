@@ -238,7 +238,7 @@ export default function CoupleNightGame() {
 
   function handleUnlockSubmit() {
     // substituir 'senha123' pela senha desejada
-    if (unlockPassword === 'senha123') {
+    if (unlockPassword === 'Novidade') {
       // desbloquear funcionalidade adicional
       alert('Conteúdo desbloqueado!');
       setUnlockPromptOpen(false);
@@ -428,29 +428,42 @@ export default function CoupleNightGame() {
       </footer>
 
       {/* Modal de senha */}
-      {unlockPromptOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-zinc-900 text-zinc-50 rounded-xl p-6 w-full max-w-sm">
-            <h2 className="text-lg font-semibold mb-4">Digite a senha</h2>
-            <input
-              type="password"
-              value={unlockPassword}
-              onChange={(e) => setUnlockPassword(e.target.value)}
-              className="w-full rounded-lg p-2 mb-4 bg-zinc-800 border border-white/20 focus:outline-none"
-            />
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={handleUnlockCancel}
-                className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600"
-              >Cancelar</button>
-              <button
-                onClick={handleUnlockSubmit}
-                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500"
-              >OK</button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {unlockPromptOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="bg-zinc-900 text-zinc-50 rounded-xl p-6 w-full max-w-sm"
+            >
+              <h2 className="text-lg font-semibold mb-4">Digite a senha</h2>
+              <input
+                type="password"
+                value={unlockPassword}
+                onChange={(e) => setUnlockPassword(e.target.value)}
+                className="w-full rounded-lg p-2 mb-4 bg-zinc-800 border border-white/20 focus:outline-none"
+              />
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={handleUnlockCancel}
+                  className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600"
+                >Cancelar</button>
+                <button
+                  onClick={handleUnlockSubmit}
+                  className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500"
+                >OK</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
