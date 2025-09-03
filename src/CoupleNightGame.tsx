@@ -235,10 +235,19 @@ export default function CoupleNightGame() {
 
   const [unlockPromptOpen, setUnlockPromptOpen] = useState(false);
   const [unlockPassword, setUnlockPassword] = useState("");
+  const [showHintPrompt, setShowHintPrompt] = useState(false);
+
+  function handleShowHint() {
+    setShowHintPrompt(true);
+  }
+  function handleHideHint() {
+    setShowHintPrompt(false);
+  }
 
   function handleUnlockSubmit() {
     // substituir 'senha123' pela senha desejada
-    if (unlockPassword === 'Novidade') {
+    const pwd = unlockPassword.trim().toLowerCase();
+    if (pwd === 'novidade') {
       // desbloquear funcionalidade adicional
       alert('Conteúdo desbloqueado!');
       setUnlockPromptOpen(false);
@@ -452,6 +461,10 @@ export default function CoupleNightGame() {
               />
               <div className="flex justify-end gap-2">
                 <button
+                  onClick={handleShowHint}
+                  className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600"
+                >Dica</button>
+                <button
                   onClick={handleUnlockCancel}
                   className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600"
                 >Cancelar</button>
@@ -459,6 +472,37 @@ export default function CoupleNightGame() {
                   onClick={handleUnlockSubmit}
                   className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500"
                 >OK</button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Modal de dica */}
+      <AnimatePresence>
+        {showHintPrompt && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.8, opacity: 0 }}
+              transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+              className="bg-zinc-900 text-zinc-50 rounded-xl p-6 w-full max-w-sm"
+            >
+              <h2 className="text-lg font-semibold mb-4">Dica de Senha</h2>
+              <p className="text-sm text-zinc-400 mb-4">
+                O que nos define?
+              </p>
+              <div className="flex justify-end gap-2">
+                <button
+                  onClick={handleHideHint}
+                  className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600"
+                >Fechar</button>
               </div>
             </motion.div>
           </motion.div>
