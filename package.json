@@ -1,11 +1,14 @@
 {
   "name": "couple-night-starter",
+  "homepage": "https://Felipe-Alcantara.github.io/SpicyGame/",
   "private": true,
   "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist",
     "preview": "vite preview"
   },
   "dependencies": {
