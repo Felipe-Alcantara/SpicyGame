@@ -236,10 +236,11 @@ export default function CoupleNightGame() {
       <header className="sticky top-0 z-30 border-b border-rose-200/20 backdrop-blur supports-[backdrop-filter]:bg-rose-950/40">
         <div className="mx-auto max-w-5xl px-4 py-3 flex items-center gap-3">
           <Heart className="text-red-400" />
-          <span className="font-semibold">Couple Night — 1 mês ✨</span>
+          <span className="font-semibold">Spicy Game 🌶️</span>
           <div className="ml-auto flex items-center gap-2 text-xs">
             <Badge className="bg-red-600/80">Sem anúncios</Badge>
             <Badge className="bg-zinc-800">Personalizável</Badge>
+            <Badge className="bg-zinc-800">Feito com carinho</Badge>
           </div>
         </div>
       </header>
