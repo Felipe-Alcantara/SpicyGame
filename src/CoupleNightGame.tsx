@@ -229,13 +229,35 @@ export default function CoupleNightGame() {
     setTimerSec(0);
   }
 
+  function handleHeartClick() {
+    setUnlockPromptOpen(true);
+  }
+
+  const [unlockPromptOpen, setUnlockPromptOpen] = useState(false);
+  const [unlockPassword, setUnlockPassword] = useState("");
+
+  function handleUnlockSubmit() {
+    // substituir 'senha123' pela senha desejada
+    if (unlockPassword === 'senha123') {
+      // desbloquear funcionalidade adicional
+      alert('Conteúdo desbloqueado!');
+      setUnlockPromptOpen(false);
+    } else {
+      alert('Senha inválida');
+    }
+  }
+
+  function handleUnlockCancel() {
+    setUnlockPromptOpen(false);
+  }
+
   // UI
   return (
     <div className="min-h-screen bg-gradient-to-b from-rose-800 via-rose-900 to-rose-950 text-zinc-50 selection:bg-red-500/40">
       {/* Topbar */}
       <header className="sticky top-0 z-30 border-b border-rose-200/20 backdrop-blur supports-[backdrop-filter]:bg-rose-950/40">
         <div className="mx-auto max-w-5xl px-4 py-3 flex items-center gap-3">
-          <Heart className="text-red-400" />
+          <Heart className="text-red-400 cursor-pointer" size={24} onClick={handleHeartClick} />
           <span className="font-semibold">Spicy Game 🌶️</span>
           <div className="ml-auto flex items-center gap-2 text-xs">
             <Badge className="bg-red-600/80">Sem anúncios</Badge>
@@ -404,6 +426,31 @@ export default function CoupleNightGame() {
       <footer className="py-10 text-center text-xs text-zinc-400 border-t border-white/10">
         Feito com <span className="text-red-500">❤</span> para a noite de vocês — sem anúncios.
       </footer>
+
+      {/* Modal de senha */}
+      {unlockPromptOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-zinc-900 text-zinc-50 rounded-xl p-6 w-full max-w-sm">
+            <h2 className="text-lg font-semibold mb-4">Digite a senha</h2>
+            <input
+              type="password"
+              value={unlockPassword}
+              onChange={(e) => setUnlockPassword(e.target.value)}
+              className="w-full rounded-lg p-2 mb-4 bg-zinc-800 border border-white/20 focus:outline-none"
+            />
+            <div className="flex justify-end gap-2">
+              <button
+                onClick={handleUnlockCancel}
+                className="px-4 py-2 rounded-lg bg-zinc-700 hover:bg-zinc-600"
+              >Cancelar</button>
+              <button
+                onClick={handleUnlockSubmit}
+                className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500"
+              >OK</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
