@@ -1,6 +1,10 @@
-import React from 'react'
-import CoupleNightGame from './CoupleNightGame'
+import { SpicyGame } from "./components/game/SpicyGame";
+import { ToastProvider } from "./components/ui/Toast";
 
-export default function App(){
-  return <CoupleNightGame />
+export default function App() {
+  return (
+    <ToastProvider>
+      <SpicyGame />
+    </ToastProvider>
+  );
 }
