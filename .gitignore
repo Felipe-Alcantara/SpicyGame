@@ -1,1 +1,22 @@
-node_modules/.cache/gh-pages/https\!github.com\!Felipe-Alcantara\!SpicyGame.git/
+# Dependências
+node_modules/
+
+# Saída de build (o site publicado fica em docs/, versionado de propósito)
+dist/
+
+# Logs e caches de ferramentas
+*.log
+npm-debug.log*
+.vite/
+.cache/
+
+# Ambiente local
+.env
+.env.local
+.env.*.local
+
+# Sistema operacional / editores
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
