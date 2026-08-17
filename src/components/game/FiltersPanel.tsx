@@ -17,7 +17,6 @@ export function FiltersPanel({
   levelIndex,
   cats,
   poolSize,
-  maxLevelIndex,
   onLevelChange,
   onToggleCategory,
   onSetAllCategories,
@@ -25,8 +24,6 @@ export function FiltersPanel({
   levelIndex: number;
   cats: Record<Category, boolean>;
   poolSize: number;
-  /** Último nível liberado — o Nuclear só entra depois do easter egg. */
-  maxLevelIndex: number;
   onLevelChange: (index: number) => void;
   onToggleCategory: (cat: Category, value: boolean) => void;
   onSetAllCategories: (value: boolean) => void;
@@ -57,20 +54,17 @@ export function FiltersPanel({
             label="Intensidade máxima"
             value={levelIndex}
             min={0}
-            max={maxLevelIndex}
+            max={LEVELS.length - 1}
             step={1}
             onChange={onLevelChange}
           />
-          {/* Só as legendas dos níveis liberados: com o Nuclear trancado o
-              slider termina antes, e mostrar a legenda dele desalinharia tudo. */}
           <div className="mt-1 flex justify-between text-[10px] uppercase tracking-wider text-rose-100/30">
-            {LEVELS.slice(0, maxLevelIndex + 1).map((l) => (
+            {LEVELS.map((l) => (
               <span key={l}>{LEVEL_LABELS[l]}</span>
             ))}
           </div>
           <p className="mt-2 text-xs text-rose-100/40">
             Entram no baralho todas as cartas até esse nível.
-            {maxLevelIndex < LEVELS.length - 1 && " O Nuclear ainda está trancado 🔒"}
           </p>
         </div>
 

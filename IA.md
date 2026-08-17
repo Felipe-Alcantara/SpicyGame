@@ -11,9 +11,9 @@
 
 Última atualização: [2026-07-31]
 
-- **Fase**: refatoração v0.2.0 concluída — app modularizado, baralho expandido para
+- **Fase**: v0.2.1 — easter egg devolvido ao propósito original; refatoração v0.2.0 concluída — app modularizado, baralho expandido para
   340 cartas, interface redesenhada. Build, typecheck e testes passando.
-- **Em andamento**: nada. A tarefa "Atualizar o SpicyGame" (Notion) foi entregue.
+- **Em andamento**: nada obrigatório. Pendente de conteúdo: a mensagem do easter egg em `src/data/segredo.ts` ainda está com o texto de exemplo — só o Felipe pode escrevê-la.
 - **Próximo passo sugerido**: jogar uma partida de verdade e ajustar o balanço
   do baralho (quais níveis pesam mais na prática).
 - **Risco aberto**: nenhum conhecido.
@@ -238,3 +238,60 @@ segunda, na 5174, mostrou o SpicyGame.
 
 > **Assinatura de Origem**
 > Formato do arquivo: **Felixo System Design** — https://github.com/Felipe-Alcantara/Felixo-System-Design
+
+---
+
+## [2026-08-17] O segredo da pimenta voltou a ser um recado, não um desbloqueio
+
+**O que estava errado.** O modal atrás da pimenta do cabeçalho pedia uma senha
+e, ao acertar, **liberava o nível Nuclear**. Isso nunca foi a intenção: o
+segredo sempre foi uma **mensagem para a namorada** — a funcionalidade estava
+inacabada de propósito, esperando o texto ser escrito.
+
+**Como o erro entrou.** Na refatoração v0.2.0, um agente encontrou o gancho —
+que acertava a senha e só mostrava um alerta — e leu **vazio como quebrado**.
+Preencheu com a primeira função plausível que tinha à mão: desbloquear o nível
+mais quente. O próprio comentário que ele deixou no `SecretModal.tsx` registrava
+o raciocínio: *"antes ele só mostrava um alerta e não fazia nada"*.
+
+> **A lição, que vale além deste projeto:** código incompleto e código quebrado
+> se parecem, e a diferença mora na **intenção**, que não está no arquivo. Um
+> gancho sem conteúdo não é convite para inventar conteúdo. Quando um agente
+> encontrar algo assim, o certo é **perguntar ou registrar**, não preencher.
+> Este `IA.md` existe justamente para que a intenção deixe de ser invisível.
+
+### O que mudou
+
+- **`src/data/segredo.ts` (novo)** — o conteúdo do easter egg saiu do código:
+  senha, dica, título, mensagem e assinatura. Mexer no recado não deveria exigir
+  abrir um componente React. Traz também `senhaCorreta`, `temMensagem` e
+  `paragrafos` como funções puras.
+- **`SecretModal.tsx`** — deixou de conhecer o Nuclear. Pede a senha e, do outro
+  lado, mostra a mensagem com animação. **Fechar e reabrir pede a senha de
+  novo**: um segredo que fica destrancado depois da primeira vez deixa de ser
+  segredo para quem pegar o aparelho.
+- **`SpicyGame.tsx`** — o gate do Nuclear saiu inteiro. A chave
+  `spicy-game-nuclear-unlocked` sobrevive apenas para ser **apagada** de quem já
+  jogou; deixar lixo no `localStorage` de terceiro é sujeira que ninguém mais
+  removeria.
+- **`FiltersPanel.tsx`** — o slider vai até o Nuclear como qualquer outro nível,
+  e o aviso "🔒 trancado" saiu.
+
+### Decisões
+
+- **O Nuclear não é mais gated.** A alternativa seria uma confirmação explícita
+  no filtro, mas ele já é uma escolha consciente: o slider mostra o nome do
+  nível e o texto diz que entram todas as cartas até ali.
+- **Sem mensagem escrita, a tela diz isso** em vez de abrir um espaço em branco
+  — que pareceria defeito e ainda estragaria a surpresa. `temMensagem()` também
+  recusa o texto de exemplo que acompanha o arquivo, senão o easter egg
+  "funcionaria" exibindo a instrução de preenchimento para quem deveria receber
+  o recado.
+- **Guarda de entrega**: há um teste afirmando que a mensagem ainda é a de
+  exemplo. Quando o texto real entrar, ele falha de propósito — é o lembrete de
+  apagá-lo e a prova de que o conteúdo chegou.
+
+### Validação
+
+`npm run typecheck` limpo, **21 testes** verdes (13 novos em `segredo.test.ts`)
+e `npm run build` gerando `docs/`. **Não testado no navegador** nesta sessão.

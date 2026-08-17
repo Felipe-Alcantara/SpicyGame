@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { LEVELS } from "../../data/taxonomy";
 import { useGameSession } from "../../hooks/useGameSession";
 import { AppHeader } from "../layout/AppHeader";
 import { BackgroundFX } from "../layout/BackgroundFX";
@@ -17,8 +16,15 @@ import { PlayersPanel } from "./PlayersPanel";
 import { SecretModal } from "./SecretModal";
 import { cn } from "../../lib/cn";
 
-const NUCLEAR_INDEX = LEVELS.length - 1;
-const NUCLEAR_KEY = "spicy-game-nuclear-unlocked";
+/**
+ * Chave do desbloqueio do Nuclear por senha, que não existe mais.
+ *
+ * O Nuclear virou um nível como os outros, escolhido no filtro de intensidade —
+ * a senha nunca teve a ver com isso (ver `data/segredo.ts`). A chave só
+ * sobrevive aqui para ser APAGADA de quem já jogou: deixar lixo no
+ * `localStorage` de terceiro é sujeira que ninguém mais vai saber remover.
+ */
+const CHAVE_NUCLEAR_ANTIGA = "spicy-game-nuclear-unlocked";
 
 /**
  * Página do jogo: junta o palco da carta com o painel lateral de ajustes.
@@ -31,32 +37,16 @@ export function SpicyGame() {
   const notify = useToast();
   const [panelOpen, setPanelOpen] = useState(false);
   const [secretOpen, setSecretOpen] = useState(false);
-  const [nuclearUnlocked, setNuclearUnlocked] = useState(false);
 
+  // Limpeza única do desbloqueio que não existe mais. Sem isto, a chave ficaria
+  // para sempre no navegador de quem já tinha acertado a senha.
   useEffect(() => {
     try {
-      setNuclearUnlocked(localStorage.getItem(NUCLEAR_KEY) === "1");
+      localStorage.removeItem(CHAVE_NUCLEAR_ANTIGA);
     } catch {
-      /* storage indisponível: fica trancado nesta sessão */
+      /* storage indisponível: não há o que limpar */
     }
   }, []);
-
-  // Se o nível estava no Nuclear e o desbloqueio se perdeu, volta um degrau.
-  const maxLevelIndex = nuclearUnlocked ? NUCLEAR_INDEX : NUCLEAR_INDEX - 1;
-  useEffect(() => {
-    if (game.levelIndex > maxLevelIndex) game.setLevelIndex(maxLevelIndex);
-  }, [game.levelIndex, maxLevelIndex]);
-
-  function unlockNuclear() {
-    setNuclearUnlocked(true);
-    try {
-      localStorage.setItem(NUCLEAR_KEY, "1");
-    } catch {
-      /* segue desbloqueado só nesta sessão */
-    }
-    setSecretOpen(false);
-    notify("Nível Nuclear liberado. Boa sorte 🔥", "success");
-  }
 
   const panel = (
     <div className="space-y-4">
@@ -72,7 +62,6 @@ export function SpicyGame() {
         levelIndex={game.levelIndex}
         cats={game.cats}
         poolSize={game.poolSize}
-        maxLevelIndex={maxLevelIndex}
         onLevelChange={game.setLevelIndex}
         onToggleCategory={game.toggleCategory}
         onSetAllCategories={game.setAllCategories}
@@ -165,12 +154,7 @@ export function SpicyGame() {
         )}
       </AnimatePresence>
 
-      <SecretModal
-        open={secretOpen}
-        onClose={() => setSecretOpen(false)}
-        onUnlock={unlockNuclear}
-        alreadyUnlocked={nuclearUnlocked}
-      />
+      <SecretModal open={secretOpen} onClose={() => setSecretOpen(false)} />
 
       <footer className="border-t border-white/5 py-8 text-center text-xs text-rose-100/30">
         Feito com <span className="text-rose-500">❤</span> para a noite de vocês — sem anúncios,

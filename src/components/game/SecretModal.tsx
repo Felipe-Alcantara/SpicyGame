@@ -1,84 +1,135 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { Modal } from "../ui/Modal";
 import { Button } from "../ui/Button";
 import { Input } from "../ui/Field";
-
-/** Senha do easter egg. É só uma brincadeira do casal — não protege nada. */
-const SECRET = "novidade";
-const HINT = "O que nos define?";
+import {
+  ASSINATURA,
+  DICA,
+  MENSAGEM,
+  TITULO,
+  paragrafos,
+  senhaCorreta,
+  temMensagem,
+} from "../../data/segredo";
 
 /**
- * Modal secreto atrás da chama do cabeçalho. Acertando a senha, o nível
- * Nuclear entra na roda — antes ele só mostrava um alerta e não fazia nada.
+ * O segredo atrás da pimenta do cabeçalho: uma senha e, do outro lado, um
+ * recado.
+ *
+ * Este modal já esteve ligado ao desbloqueio do nível Nuclear. Era engano — o
+ * gancho estava vazio porque a mensagem ainda não tinha sido escrita, e alguém
+ * leu vazio como quebrado. O conteúdo mora em `data/segredo.ts`; aqui só existe
+ * a porta.
  */
 export function SecretModal({
   open,
   onClose,
-  onUnlock,
-  alreadyUnlocked,
 }: {
   open: boolean;
   onClose: () => void;
-  onUnlock: () => void;
-  alreadyUnlocked: boolean;
 }) {
-  const [value, setValue] = useState("");
-  const [error, setError] = useState(false);
-  const [hintVisible, setHintVisible] = useState(false);
+  const [valor, setValor] = useState("");
+  const [erro, setErro] = useState(false);
+  const [dicaVisivel, setDicaVisivel] = useState(false);
+  const [aberto, setAberto] = useState(false);
 
-  function submit() {
-    if (value.trim().toLowerCase() === SECRET) {
-      setValue("");
-      setError(false);
-      onUnlock();
+  // Fechar e reabrir pede a senha de novo: um segredo que fica destrancado
+  // depois da primeira vez deixa de ser segredo para quem pegar o aparelho.
+  useEffect(() => {
+    if (!open) {
+      setValor("");
+      setErro(false);
+      setDicaVisivel(false);
+      setAberto(false);
+    }
+  }, [open]);
+
+  function enviar() {
+    if (senhaCorreta(valor)) {
+      setValor("");
+      setErro(false);
+      setAberto(true);
       return;
     }
-    setError(true);
+    setErro(true);
+  }
+
+  if (aberto) {
+    return (
+      <Modal
+        open={open}
+        onClose={onClose}
+        title={TITULO}
+        footer={<Button onClick={onClose}>Fechar</Button>}
+      >
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.45, ease: "easeOut" }}
+          className="space-y-3"
+        >
+          {temMensagem() ? (
+            <>
+              {paragrafos(MENSAGEM).map((texto, indice) => (
+                <p
+                  key={indice}
+                  className="whitespace-pre-line text-sm leading-relaxed text-rose-50"
+                >
+                  {texto}
+                </p>
+              ))}
+              {ASSINATURA.trim() && (
+                <p className="pt-1 text-right text-sm italic text-rose-200/70">
+                  {ASSINATURA.trim()}
+                </p>
+              )}
+            </>
+          ) : (
+            // Sem mensagem escrita, dizer isso é melhor do que abrir um espaço
+            // em branco — que pareceria defeito e ainda estragaria a surpresa.
+            <p className="text-sm leading-relaxed text-rose-100/60">
+              A senha está certa 💛 — o recado ainda está sendo escrito.
+            </p>
+          )}
+        </motion.div>
+      </Modal>
+    );
   }
 
   return (
     <Modal
       open={open}
       onClose={onClose}
-      title={alreadyUnlocked ? "Já tá liberado 🔥" : "Digite a senha"}
-      description={
-        alreadyUnlocked
-          ? "O nível Nuclear está disponível no filtro de intensidade."
-          : "Acerte e o nível Nuclear entra no baralho."
-      }
+      title="Digite a senha"
+      description="Tem algo escondido aqui."
       footer={
-        alreadyUnlocked ? (
-          <Button onClick={onClose}>Fechar</Button>
-        ) : (
-          <>
-            <Button variant="ghost" onClick={() => setHintVisible(true)}>
-              Dica
-            </Button>
-            <Button variant="secondary" onClick={onClose}>
-              Cancelar
-            </Button>
-            <Button onClick={submit}>Desbloquear</Button>
-          </>
-        )
+        <>
+          <Button variant="ghost" onClick={() => setDicaVisivel(true)}>
+            Dica
+          </Button>
+          <Button variant="secondary" onClick={onClose}>
+            Cancelar
+          </Button>
+          <Button onClick={enviar}>Abrir</Button>
+        </>
       }
     >
-      {!alreadyUnlocked && (
-        <div className="space-y-2">
-          <Input
-            type="password"
-            value={value}
-            onChange={(e) => {
-              setValue(e.target.value);
-              setError(false);
-            }}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            aria-label="Senha secreta"
-            autoFocus
-          />
-          {error && <p className="text-sm text-red-300">Não é essa. Tenta de novo.</p>}
-          {hintVisible && <p className="text-sm text-rose-100/60">Dica: {HINT}</p>}
-        </div>
-      )}
+      <div className="space-y-2">
+        <Input
+          type="password"
+          value={valor}
+          onChange={(e) => {
+            setValor(e.target.value);
+            setErro(false);
+          }}
+          onKeyDown={(e) => e.key === "Enter" && enviar()}
+          aria-label="Senha secreta"
+          autoFocus
+        />
+        {erro && <p className="text-sm text-red-300">Não é essa. Tenta de novo.</p>}
+        {dicaVisivel && <p className="text-sm text-rose-100/60">Dica: {DICA}</p>}
+      </div>
     </Modal>
   );
 }
