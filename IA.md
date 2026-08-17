@@ -9,11 +9,11 @@
 
 ## 📊 ESTADO ATUAL (RESUMO VIVO)
 
-Última atualização: [2026-07-31]
+Última atualização: [2026-08-17]
 
 - **Fase**: v0.2.1 — easter egg devolvido ao propósito original; refatoração v0.2.0 concluída — app modularizado, baralho expandido para
   340 cartas, interface redesenhada. Build, typecheck e testes passando.
-- **Em andamento**: nada obrigatório. Pendente de conteúdo: a mensagem do easter egg em `src/data/segredo.ts` ainda está com o texto de exemplo — só o Felipe pode escrevê-la.
+- **Estado final desta rodada**: concluído. A porta do easter egg valida a senha e exibe o recado configurado em `src/data/segredo.ts`; não desbloqueia o nível Nuclear.
 - **Próximo passo sugerido**: jogar uma partida de verdade e ajustar o balanço
   do baralho (quais níveis pesam mais na prática).
 - **Risco aberto**: nenhum conhecido.
@@ -178,6 +178,8 @@ escreve em `docs/`).
 não fazia absolutamente nada. Agora ele libera o nível **Nuclear** no filtro de
 intensidade (75 cartas), guardado em `localStorage` (`spicy-game-nuclear-unlocked`).
 É brincadeira do casal, não segurança — a senha está no código-fonte.
+
+[2026-08-17] ✅ O fluxo do easter egg foi corrigido: `SecretModal` agora valida a senha, mostra título, parágrafos e assinatura definidos em `src/data/segredo.ts`, e apresenta estado explícito enquanto o recado ainda não foi preenchido. O nível Nuclear voltou a ser independente do segredo. Validação: 21 testes, `npm run typecheck` e `npm run build` concluídos com sucesso.
 
 [2026-07-31] Baralho: 340 cartas base (era 126). Por modo — Eu Nunca 105,
 Mais Provável 80, Verdade 80, Desafio 75. Por nível, cada modo tem no mínimo
