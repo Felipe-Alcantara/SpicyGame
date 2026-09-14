@@ -30,7 +30,9 @@ export function loadState(): Partial<PersistedState> | null {
   if (!raw) return null;
   try {
     const parsed = JSON.parse(raw);
-    return typeof parsed === "object" && parsed ? parsed : null;
+    return typeof parsed === "object" && parsed !== null && !Array.isArray(parsed)
+      ? parsed
+      : null;
   } catch {
     return null;
   }
