@@ -6,7 +6,7 @@ import { Textarea } from "../ui/Field";
 import { Modal } from "../ui/Modal";
 import { useToast } from "../ui/Toast";
 
-/** Exportar, importar e resetar o que está salvo neste navegador. */
+/** Exportar, importar e resetar o estado salvo neste navegador. */
 export function DataPanel({
   onExport,
   onImport,
@@ -25,7 +25,7 @@ export function DataPanel({
     const data = onExport();
     try {
       await navigator.clipboard.writeText(data);
-      notify("Configurações copiadas para a área de transferência.", "success");
+    notify("Estado completo copiado para a área de transferência.", "success");
     } catch {
       notify("O navegador bloqueou a cópia. Selecione e copie manualmente.", "error");
     }
@@ -39,7 +39,7 @@ export function DataPanel({
     }
     setImportOpen(false);
     setJson("");
-    notify("Importado com sucesso.", "success");
+    notify("Estado importado com sucesso.", "success");
   }
 
   return (
@@ -48,7 +48,7 @@ export function DataPanel({
         <CardHeader>
           <CardTitle>Seus dados</CardTitle>
           <CardDescription>
-            Tudo fica salvo só neste navegador. Nada é enviado para lugar nenhum.
+            O estado completo pode ser exportado em JSON e fica salvo só neste navegador.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
@@ -67,8 +67,8 @@ export function DataPanel({
       <Modal
         open={importOpen}
         onClose={() => setImportOpen(false)}
-        title="Importar configurações"
-        description="Cole o JSON que você exportou antes."
+        title="Importar estado"
+        description="Cole um JSON exportado pelo Spicy Game, atual ou legado."
         footer={
           <>
             <Button variant="secondary" onClick={() => setImportOpen(false)}>
@@ -83,8 +83,8 @@ export function DataPanel({
         <Textarea
           value={json}
           onChange={(e) => setJson(e.target.value)}
-          placeholder='{ "players": [...], "customCards": [...] }'
-          aria-label="JSON de configurações"
+          placeholder='{ "version": 1, "players": [...], "currentMode": "truth", ... }'
+          aria-label="JSON do estado da partida"
         />
       </Modal>
 

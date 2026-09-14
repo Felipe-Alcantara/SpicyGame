@@ -13,12 +13,56 @@ aparelho.
 - **Placar de goles** por jogador.
 - **Cartas suas**: criar, editar, duplicar as do baralho base e ocultar as que
   não têm a ver com vocês.
-- **Exportar e importar** jogadores, cartas próprias, cartas ocultas e placar em
-  JSON (as preferências de modo, nível e categorias ainda não entram no arquivo).
+- **Exportar e importar** a partida completa em JSON versionado: jogadores, modo,
+  nível, categorias, cartas próprias, cartas ocultas e placar.
 - **Funciona no celular**: carta arrastável, painel de ajustes em gaveta e
   atalhos de teclado (`←` `→` e espaço) no computador.
 
 Tudo o que você configura fica salvo no `localStorage` do próprio navegador.
+
+### Formato de exportação e importação
+
+O arquivo atual usa `version: 1` e contém todos os campos configuráveis da
+partida:
+
+```json
+{
+  "version": 1,
+  "players": ["Ela", "Ele"],
+  "currentMode": "truth",
+  "levelIndex": 1,
+  "cats": {
+    "cute": true,
+    "funny": true,
+    "spicy": true,
+    "deep": true,
+    "romantic": true,
+    "relationship": true,
+    "life": true,
+    "confession": true,
+    "drink": true,
+    "twitter": true,
+    "roleplay": true,
+    "esex": true,
+    "kink": true,
+    "bdsm": true,
+    "sexual": true
+  },
+  "customCards": [],
+  "hiddenIds": [],
+  "scores": {}
+}
+```
+
+O baralho e o cursor não são exportados: eles são derivados novamente a partir
+dos filtros e das cartas ao importar. O importador valida o documento inteiro
+antes de alterar a partida, normaliza espaços e duplicatas e rejeita JSON,
+versões, jogadores, filtros, cartas ou placares incompatíveis. IDs repetidos de
+cartas próprias são rejeitados para evitar duas cartas com a mesma identidade.
+
+Exportações antigas sem `version` continuam aceitas quando contêm os quatro
+campos originais (`players`, `customCards`, `hiddenIds` e `scores`). Como esses
+arquivos não conhecem modo, nível ou categorias, os filtros atuais são mantidos.
 
 ## Como rodar
 
@@ -37,7 +81,7 @@ npm run build      # verifica os tipos e gera o build em docs/
 npm run lint       # checa regras mínimas de JavaScript/TypeScript
 npm run preview    # serve o build local
 npm run typecheck  # só a checagem de tipos
-npm test           # testes do baralho (vitest)
+npm test           # suíte completa de testes (vitest)
 ```
 
 ### Publicar

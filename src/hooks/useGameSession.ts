@@ -20,6 +20,7 @@ import {
 import { ALL_BASE_CARDS } from "../data/cards";
 import { shuffle, uid } from "../lib/random";
 import { clearState, loadState, saveState } from "../lib/storage";
+import { parseGameState, serializeGameState } from "../lib/stateTransfer";
 
 const DEFAULT_PLAYERS = ["Ela", "Ele"];
 const DEFAULT_LEVEL_INDEX = 1;
@@ -171,21 +172,31 @@ export function useGameSession() {
 
   // ---------- Exportar / importar / resetar ----------
   const exportState = useCallback(() => {
-    return JSON.stringify({ players, customCards, hiddenIds, scores }, null, 2);
-  }, [players, customCards, hiddenIds, scores]);
+    return serializeGameState({
+      players,
+      currentMode,
+      levelIndex,
+      cats,
+      customCards,
+      hiddenIds,
+      scores,
+    });
+  }, [players, currentMode, levelIndex, cats, customCards, hiddenIds, scores]);
 
-  /** Importa um estado exportado. Devolve mensagem de erro, ou `null` se deu certo. */
+  /** Valida o arquivo inteiro antes de alterar qualquer parte do estado. */
   const importState = useCallback((json: string): string | null => {
-    try {
-      const obj = JSON.parse(json);
-      if (Array.isArray(obj.players) && obj.players.length) setPlayers(obj.players);
-      if (Array.isArray(obj.customCards)) setCustomCards(obj.customCards);
-      if (Array.isArray(obj.hiddenIds)) setHiddenIds(obj.hiddenIds);
-      if (obj.scores && typeof obj.scores === "object") setScores(obj.scores);
-      return null;
-    } catch {
-      return "JSON inválido — confira se você colou o texto inteiro.";
-    }
+    const result = parseGameState(json);
+    if (!result.ok) return result.error;
+
+    const { state } = result;
+    if (state.players !== undefined) setPlayers(state.players);
+    if (state.currentMode !== undefined) setCurrentMode(state.currentMode);
+    if (state.levelIndex !== undefined) setLevelIndex(state.levelIndex);
+    if (state.cats !== undefined) setCats(state.cats);
+    if (state.customCards !== undefined) setCustomCards(state.customCards);
+    if (state.hiddenIds !== undefined) setHiddenIds(state.hiddenIds);
+    if (state.scores !== undefined) setScores(state.scores);
+    return null;
   }, []);
 
   const resetAll = useCallback(() => {

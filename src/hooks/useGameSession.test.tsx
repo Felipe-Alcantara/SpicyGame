@@ -2,8 +2,9 @@ import { createElement } from "react";
 import { act, create, type ReactTestRenderer } from "react-test-renderer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { levelRank, type CardItem, type Category } from "../data/taxonomy";
+import { CATEGORIES, levelRank, type CardItem, type Category } from "../data/taxonomy";
 import { STORAGE_KEY } from "../lib/storage";
+import { EXPORT_FORMAT_VERSION } from "../lib/stateTransfer";
 import { MemoryStorage } from "../test-utils";
 import { useGameSession, type GameSession } from "./useGameSession";
 
@@ -361,10 +362,13 @@ describe("useGameSession — jogadores, cartas e exportação", () => {
 
     session.update(() => {
       const current = session.get();
+      current.setCurrentMode("truth");
+      current.setLevelIndex(2);
+      current.toggleCategory("cute", false);
       current.addPlayer("Carol");
       current.addPoint("Carol", 2);
       current.addCustomCard({
-        mode: "never",
+        mode: "truth",
         text: "Exportada",
         level: "spicy",
         cats: ["romantic"],
@@ -373,22 +377,36 @@ describe("useGameSession — jogadores, cartas e exportação", () => {
     });
 
     const exported = JSON.parse(session.get().exportState()) as {
+      version: number;
       players: string[];
+      currentMode: string;
+      levelIndex: number;
+      cats: Record<Category, boolean>;
       customCards: CardItem[];
       hiddenIds: string[];
       scores: Record<string, number>;
     };
+    expect(exported.version).toBe(EXPORT_FORMAT_VERSION);
     expect(exported.players).toContain("Carol");
+    expect(exported.currentMode).toBe("truth");
+    expect(exported.levelIndex).toBe(2);
+    expect(Object.keys(exported.cats)).toEqual(CATEGORIES);
+    expect(exported.cats.cute).toBe(false);
     expect(exported.customCards.map((card) => card.text)).toContain("Exportada");
     expect(exported.hiddenIds).toContain(hiddenId);
     expect(exported.scores).toEqual({ Carol: 2 });
 
     let importResult: string | null = "não executado";
     const importedCard = makeCard({ id: "custom-imported", text: "Importada" });
+    const importedCats = { ...session.get().cats, romantic: false };
     session.update(() => {
       importResult = session.get().importState(
         JSON.stringify({
+          version: EXPORT_FORMAT_VERSION,
           players: ["Dani"],
+          currentMode: "dare",
+          levelIndex: 3,
+          cats: importedCats,
           customCards: [importedCard],
           hiddenIds: ["custom-imported"],
           scores: { Dani: 5 },
@@ -397,6 +415,9 @@ describe("useGameSession — jogadores, cartas e exportação", () => {
     });
     expect(importResult).toBeNull();
     expect(session.get().players).toEqual(["Dani"]);
+    expect(session.get().currentMode).toBe("dare");
+    expect(session.get().levelIndex).toBe(3);
+    expect(session.get().cats).toEqual(importedCats);
     expect(session.get().customCards).toEqual([importedCard]);
     expect(session.get().hiddenIds).toEqual(["custom-imported"]);
     expect(session.get().scores).toEqual({ Dani: 5 });
@@ -409,6 +430,90 @@ describe("useGameSession — jogadores, cartas e exportação", () => {
     expect(importResult).toContain("JSON inválido");
     expect(session.get().players).toEqual(beforeInvalidImport.players);
     expect(session.get().scores).toEqual(beforeInvalidImport.scores);
+  });
+
+  it("aceita o formato antigo sem versão e preserva filtros ausentes", () => {
+    const session = startSession();
+    session.update(() => {
+      const current = session.get();
+      current.setCurrentMode("dare");
+      current.setLevelIndex(3);
+      current.toggleCategory("cute", false);
+    });
+
+    const legacyCard = makeCard({ id: "custom-legacy", text: "Carta legada" });
+    let importResult: string | null = "não executado";
+    session.update(() => {
+      importResult = session.get().importState(
+        JSON.stringify({
+          players: ["Legado"],
+          customCards: [legacyCard],
+          hiddenIds: ["n1"],
+          scores: { Legado: 2 },
+        }),
+      );
+    });
+
+    expect(importResult).toBeNull();
+    expect(session.get().players).toEqual(["Legado"]);
+    expect(session.get().customCards).toEqual([legacyCard]);
+    expect(session.get().hiddenIds).toEqual(["n1"]);
+    expect(session.get().scores).toEqual({ Legado: 2 });
+    expect(session.get().currentMode).toBe("dare");
+    expect(session.get().levelIndex).toBe(3);
+    expect(session.get().cats.cute).toBe(false);
+  });
+
+  it("rejeita versão ou shape incompatível sem alterar o estado atual", () => {
+    const session = startSession();
+    session.update(() => {
+      const current = session.get();
+      current.setCurrentMode("truth");
+      current.setLevelIndex(2);
+      current.addPoint("Ela", 4);
+    });
+    const beforeInvalidImport = session.get().exportState();
+
+    let importResult: string | null = "não executado";
+    session.update(() => {
+      importResult = session.get().importState(
+        JSON.stringify({
+          version: EXPORT_FORMAT_VERSION + 1,
+          players: ["Incompatível"],
+          currentMode: "truth",
+          levelIndex: 2,
+          cats: session.get().cats,
+          customCards: [],
+          hiddenIds: [],
+          scores: {},
+        }),
+      );
+    });
+    expect(importResult).toContain("Versão de estado não suportada");
+    expect(session.get().exportState()).toBe(beforeInvalidImport);
+
+    session.update(() => {
+      importResult = session.get().importState(
+        JSON.stringify({
+          version: EXPORT_FORMAT_VERSION,
+          players: ["Incompatível"],
+          currentMode: "truth",
+          levelIndex: 2,
+          cats: session.get().cats,
+          customCards: [{ id: "bad", mode: "truth", text: "", level: "cute", cats: ["cute"] }],
+          hiddenIds: [],
+          scores: {},
+        }),
+      );
+    });
+    expect(importResult).toContain("Estado inválido");
+    expect(session.get().exportState()).toBe(beforeInvalidImport);
+
+    session.update(() => {
+      importResult = session.get().importState("[]");
+    });
+    expect(importResult).toContain("Estado inválido");
+    expect(session.get().exportState()).toBe(beforeInvalidImport);
   });
 
   it("restaura todos os defaults e limpa as chaves ao resetar", () => {

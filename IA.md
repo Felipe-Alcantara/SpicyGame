@@ -15,14 +15,14 @@
   340 cartas, interface redesenhada. A auditoria geral desta rodada foi concluída sobre o `origin/main` em `8fedca2`.
 - **Estado final desta rodada**: auditoria técnica registrada; o jogo continua sendo
   uma aplicação web local, sem conta, servidor ou sincronização entre aparelhos.
-- **Próximo passo sugerido**: tratar os achados P1 (exportação/importação,
-  filtro de categorias e revisão editorial) e então jogar partidas reais para
-  medir o balanço antes de ampliar o escopo.
-- **Risco aberto**: a exportação não leva as preferências de partida; o filtro de
-  categorias pode cair silenciosamente para todas as cartas do nível; há ao menos
-  uma carta truncada (`n4`); importação e hook principal ainda não têm cobertura
-  dedicada. A instalação, lint e CI foram regularizados na entrada de
-  2026-09-14 abaixo.
+- **Próximo passo sugerido**: tratar os achados P1 restantes (filtro de
+  categorias e revisão editorial) e então jogar partidas reais para medir o
+  balanço antes de ampliar o escopo.
+- **Risco aberto**: o filtro de categorias pode cair silenciosamente para todas
+  as cartas do nível; há ao menos uma carta truncada (`n4`) e o conteúdo ainda
+  precisa de revisão editorial. Exportação/importação e a cobertura do hook
+  foram corrigidas nos follow-ups de 2026-09-14. A instalação, lint e CI foram
+  regularizados na entrada abaixo.
 
 ---
 
@@ -506,3 +506,33 @@ O projeto passa a ter uma única instalação suportada e verificável: Node 24.
 npm 11.x, com o workflow de qualidade como barreira mínima antes de aceitar
 mudanças. A ausência de testes dedicados para `useGameSession` continua sendo
 um follow-up separado da auditoria geral.
+
+## [2026-09-14] Contrato completo de exportação e importação
+
+### Decisão e formato
+
+O export/import agora usa `version: 1` e transporta o estado configurável
+completo: `players`, `currentMode`, `levelIndex`, `cats`, `customCards`,
+`hiddenIds` e `scores`. `deck`, `cursor` e `currentCard` continuam fora do
+arquivo porque são derivados novamente a partir do pool e dos filtros.
+
+O importador faz parsing, validação e normalização antes de chamar qualquer
+setter: exige enums válidos de modo/nível/categoria, índice de nível dentro da
+taxonomia, todas as categorias booleanas, jogadores/IDs não vazios, cards com
+shape válido e placares finitos não negativos. Espaços nas strings e duplicatas
+de nomes, IDs ocultos e categorias dos cards são normalizados; IDs repetidos de
+cards ou um erro estrutural rejeitam o documento inteiro sem alterar a partida.
+
+Exportações antigas sem `version` continuam compatíveis quando contêm os
+quatro campos originais. Nesse caso jogadores, cards, IDs ocultos e placar são
+aplicados, enquanto modo, nível e categorias permanecem como estavam, pois
+esses campos não existiam no formato antigo. Versões futuras desconhecidas são
+recusadas explicitamente.
+
+### Validação
+
+A cobertura passou a incluir round-trip do formato atual, normalização,
+compatibilidade legada, versão desconhecida, campos ausentes, cards
+malformados, JSON inválido e garantia de que entradas rejeitadas não alteram o
+estado. No checkout limpo, `npm ci`, `npm run lint`, `npm run typecheck`,
+`npm test` (43 testes), `npm run build` e `npm audit --omit=dev` passaram.
