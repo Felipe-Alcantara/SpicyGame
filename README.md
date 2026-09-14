@@ -22,10 +22,11 @@ Tudo o que você configura fica salvo no `localStorage` do próprio navegador.
 
 ## Como rodar
 
-Requisito: Node.js 18+.
+Requisito: Node.js 24.x (LTS) e npm 11.x. As versões suportadas estão
+declaradas em `package.json`.
 
 ```bash
-npm install     # instala as dependências
+npm ci           # instala exatamente o lockfile
 npm run dev     # sobe em http://localhost:5173/
 ```
 
@@ -33,6 +34,7 @@ Outros comandos:
 
 ```bash
 npm run build      # verifica os tipos e gera o build em docs/
+npm run lint       # checa regras mínimas de JavaScript/TypeScript
 npm run preview    # serve o build local
 npm run typecheck  # só a checagem de tipos
 npm test           # testes do baralho (vitest)

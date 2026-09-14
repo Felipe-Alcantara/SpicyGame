@@ -21,7 +21,8 @@
 - **Risco aberto**: a exportação não leva as preferências de partida; o filtro de
   categorias pode cair silenciosamente para todas as cartas do nível; há ao menos
   uma carta truncada (`n4`); importação e hook principal ainda não têm cobertura
-  dedicada; `npm ci` não reproduz a instalação atual sem regenerar o lockfile.
+  dedicada. A instalação, lint e CI foram regularizados na entrada de
+  2026-09-14 abaixo.
 
 ---
 
@@ -470,3 +471,38 @@ delegada para confirmação das decisões abaixo:
   página/JS/CSS publicados respondendo 200.
 - Navegador físico — não validado nesta rodada; a evidência headless anterior
   deve ser complementada por Android/iOS real.
+
+## [2026-09-14] Instalação reproduzível e gate de qualidade
+
+### O que mudou
+
+- `package-lock.json` foi regenerado com npm 11 para incluir os pacotes
+  opcionais de plataforma do esbuild que estavam ausentes e faziam `npm ci`
+  falhar.
+- `package.json` agora declara Node.js 24.x e npm 11.x como versões suportadas,
+  e o README usa `npm ci` como caminho oficial de instalação.
+- `eslint.config.js` adiciona um lint mínimo para JavaScript/TypeScript com
+  regras recomendadas e globais de browser/Node, sem misturar lint com
+  formatação.
+- `.github/workflows/quality.yml` executa em push para `main` e pull request:
+  `npm ci`, lint, typecheck, testes e build, sem fallback para `npm install`.
+
+### Validação
+
+No checkout limpo baseado nesta revisão, `npm ci --ignore-scripts --no-audit
+--fund=false`, `npm run lint`, `npm run typecheck`, `npm test` (21 testes) e
+`npm run build` passaram. A validação local usou Node 25.3.0/npm 11.6.2 e
+emitiu o aviso esperado de engine porque Node 25 está fora da versão suportada;
+o CI está fixado em Node 24.x LTS. A página oficial de releases do Node lista
+Node 24 como LTS e Node 25 como EOL.
+
+`npm audit --omit=dev` terminou sem vulnerabilidades de produção no lockfile
+regenerado. Os avisos de depreciação do Vitest/Vite relacionados a opções do
+esbuild não falharam os gates e permanecem separados desta correção.
+
+### Decisão
+
+O projeto passa a ter uma única instalação suportada e verificável: Node 24.x +
+npm 11.x, com o workflow de qualidade como barreira mínima antes de aceitar
+mudanças. A ausência de testes dedicados para `useGameSession` continua sendo
+um follow-up separado da auditoria geral.
