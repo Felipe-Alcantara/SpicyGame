@@ -13,7 +13,8 @@ aparelho.
 - **Placar de goles** por jogador.
 - **Cartas suas**: criar, editar, duplicar as do baralho base e ocultar as que
   não têm a ver com vocês.
-- **Exportar e importar** tudo em JSON, para levar o baralho para outro aparelho.
+- **Exportar e importar** jogadores, cartas próprias, cartas ocultas e placar em
+  JSON (as preferências de modo, nível e categorias ainda não entram no arquivo).
 - **Funciona no celular**: carta arrastável, painel de ajustes em gaveta e
   atalhos de teclado (`←` `→` e espaço) no computador.
 

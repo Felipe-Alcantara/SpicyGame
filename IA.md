@@ -9,14 +9,19 @@
 
 ## 📊 ESTADO ATUAL (RESUMO VIVO)
 
-Última atualização: [2026-08-17]
+Última atualização: [2026-09-14]
 
 - **Fase**: v0.2.1 — easter egg devolvido ao propósito original; refatoração v0.2.0 concluída — app modularizado, baralho expandido para
-  340 cartas, interface redesenhada. Build, typecheck e testes passando.
-- **Estado final desta rodada**: concluído. A porta do easter egg valida a senha e exibe o recado configurado em `src/data/segredo.ts`; não desbloqueia o nível Nuclear.
-- **Próximo passo sugerido**: jogar uma partida de verdade e ajustar o balanço
-  do baralho (quais níveis pesam mais na prática).
-- **Risco aberto**: nenhum conhecido.
+  340 cartas, interface redesenhada. A auditoria geral desta rodada foi concluída sobre o `origin/main` em `8fedca2`.
+- **Estado final desta rodada**: auditoria técnica registrada; o jogo continua sendo
+  uma aplicação web local, sem conta, servidor ou sincronização entre aparelhos.
+- **Próximo passo sugerido**: tratar os achados P1 (exportação/importação,
+  filtro de categorias e revisão editorial) e então jogar partidas reais para
+  medir o balanço antes de ampliar o escopo.
+- **Risco aberto**: a exportação não leva as preferências de partida; o filtro de
+  categorias pode cair silenciosamente para todas as cartas do nível; há ao menos
+  uma carta truncada (`n4`); importação e hook principal ainda não têm cobertura
+  dedicada; `npm ci` não reproduz a instalação atual sem regenerar o lockfile.
 
 ---
 
@@ -297,3 +302,171 @@ o raciocínio: *"antes ele só mostrava um alerta e não fazia nada"*.
 
 `npm run typecheck` limpo, **21 testes** verdes (13 novos em `segredo.test.ts`)
 e `npm run build` gerando `docs/`. **Não testado no navegador** nesta sessão.
+
+## [2026-09-14] Auditoria geral antes de avançar o desenvolvimento
+
+### Escopo e base de evidência
+
+Esta auditoria atende à task de revisar o jogo antes de avançar o
+desenvolvimento e avaliar uma possível transformação em app. A base de código
+auditada foi o `origin/main` em `8fedca2`, que contém a refatoração modular e o
+build publicado. O checkout local estava em uma revisão divergente e antiga;
+por isso ele não foi usado como fonte de verdade.
+
+Foram revisados o código de jogo, os 340 cards, a persistência, a exportação e
+importação, os testes, o build, a configuração do GitHub Pages, o bundle
+publicado e o histórico recente do repositório. A revisão de conteúdo foi
+estática: não substitui uma leitura editorial humana nem uma validação em
+aparelho físico.
+
+### Parecer executivo
+
+O produto está tecnicamente jogável e a refatoração não mostra uma regressão
+estrutural que impeça o uso. O estado atual é adequado para uso pessoal no
+navegador, mas ainda não está pronto para ser tratado como produto público ou
+distribuído amplamente: há três riscos P1 de comportamento/conteúdo e pouca
+proteção automatizada para o hook que concentra o estado da partida.
+
+Recomendação registrada, ainda sujeita à confirmação do dono: manter o escopo
+web/local por enquanto; corrigir os P1; fazer uma rodada real de partidas e
+revisão editorial; e, caso surja demanda por “app”, avaliar PWA primeiro. Não
+há justificativa técnica atual para começar por um app nativo. A decisão sobre
+publicar ou restringir o conteúdo adulto continua sendo do dono.
+
+### Achados priorizados
+
+#### P1 — exportação/importação não preserva o estado anunciado
+
+`useGameSession.ts` exporta apenas `players`, `customCards`, `hiddenIds` e
+`scores`. Ficam de fora `currentMode`, `levelIndex` e `cats`, embora o README
+prometa exportar/importar “tudo”. A importação também aceita arrays e objetos
+sem validar o formato dos cards, jogadores ou placar; um JSON estruturalmente
+válido, porém inválido para o jogo, pode entrar no estado em memória.
+
+Evidência: `src/hooks/useGameSession.ts`, bloco de exportação/importação; o
+contrato persistido completo está em `src/lib/storage.ts`.
+
+#### P1 — filtro de categorias pode ignorar a escolha do usuário
+
+Quando nenhuma carta atende simultaneamente ao modo, nível, visibilidade e
+categorias escolhidas, o pool cai silenciosamente para `byLevel` e depois para
+`byMode`. Assim, uma pessoa pode desmarcar assuntos e ainda receber cartas de
+categorias não selecionadas. É preciso decidir entre mostrar pool vazio com
+orientação, impedir a combinação impossível ou explicitar um fallback; o
+comportamento silencioso atual não é seguro para um filtro.
+
+Evidência: `src/hooks/useGameSession.ts:72-79`.
+
+#### P1 — conteúdo precisa de revisão antes de distribuição ampla
+
+Não há IDs duplicados nem textos exatamente repetidos, mas a inspeção encontrou
+`n4` com texto truncado e um conjunto de desafios (`d55`, `d57`, `d68`, `d70`,
+entre outros) cuja redação merece revisão explícita de consentimento, limites e
+possibilidade de recusar. Também há cartas sobre nudez, vídeo íntimo, lugares
+públicos e papéis de poder. O aviso do README ajuda no uso pessoal, mas não
+substitui uma política editorial para um site/bundle público.
+
+Evidência: `src/data/cards/never.ts` (`n4`) e `src/data/cards/dare.ts`; a
+checagem foi estática e não é um veredito jurídico ou de segurança.
+
+#### P2 — o núcleo da partida não tem testes dedicados
+
+Os 21 testes passam, distribuídos em `src/data/cards/cards.test.ts` e
+`src/data/segredo.test.ts`. Não existe teste para `useGameSession`, incluindo
+pool, avanço sem repetição, fallback de categorias, persistência, reset,
+exportação ou importação. Isso deixa os três achados acima sem uma barreira de
+regressão.
+
+#### P2 — instalação e qualidade de integração
+
+`npm run typecheck`, `npm test` e `npm run build` passaram. `npm ci` falhou no
+ambiente usado (Node 25.3.0/npm 11.6.2) porque o lockfile não contém vários
+pacotes opcionais do esbuild esperados pelo npm; foi necessário usar
+`npm install --no-audit` para concluir a validação. O repositório também não
+tem script/dependência de lint nem workflow de CI próprio. A publicação Pages
+gerenciada pelo GitHub teve execução verde, mas isso não substitui testes e
+lint do projeto.
+
+A varredura de dependências após a instalação registrou 0 vulnerabilidades de
+produção e 5 no conjunto completo (3 moderadas e 2 altas). Esse resultado deve
+ser repetido com o lockfile corrigido antes de usar o número como baseline.
+
+#### P2 — outros comportamentos a proteger
+
+- O `poolKey` usa somente IDs. Editar o texto de uma carta customizada sem
+  alterar sua presença no pool pode deixar a carta antiga no deck até uma nova
+  mudança de pool ou embaralhamento explícito.
+- A carga do `localStorage` faz apenas uma checagem superficial de objeto; a
+  versão da chave existe, mas não há validação/migração de schema completa.
+- A cópia para a área de transferência tem toast de fallback, mas não oferece
+  uma área de texto ou download quando `navigator.clipboard` falha.
+- A validação anterior em Chromium headless cobriu desktop e viewport mobile;
+  esta rodada não teve aparelho físico disponível.
+
+### Balanço e qualidade do baralho
+
+O baralho tem 340 cartas: Eu Nunca 105, Quem é Mais Provável 80, Verdade 80 e
+Desafio 75. Por nível: Fofo 100, Picante 93, Hot 102 e Nuclear 45. A divisão
+por modo e nível é:
+
+| modo | Fofo | Picante | Hot | Nuclear |
+| --- | ---: | ---: | ---: | ---: |
+| Eu Nunca | 30 | 29 | 31 | 15 |
+| Quem é Mais Provável | 26 | 21 | 23 | 10 |
+| Verdade | 22 | 22 | 25 | 11 |
+| Desafio | 22 | 21 | 23 | 9 |
+
+Não há repetição exata de ID ou texto. A cobertura de categorias é desigual:
+`funny` aparece em 104 cards, `sexual` em 90, `spicy` em 79, enquanto
+`roleplay` aparece em 10 e `life`, `twitter` e `drink` em 16–17 cada. Isso
+parece parcialmente intencional pela intensidade, mas precisa ser avaliado em
+partidas reais, porque o fallback de categorias distorce qualquer conclusão.
+Há 85 usos de `{p}` e nenhum uso de `{p2}` no baralho base; o suporte técnico ao
+segundo participante existe, mas ainda não é exercitado pelos cards atuais.
+
+### Publicação, privacidade e possibilidade de app
+
+O repositório e o GitHub Pages são públicos. A aplicação não contém chamadas de
+rede no código de `src/` e salva nomes, cartas próprias, cartas ocultas,
+preferências e placar somente no `localStorage` do navegador; não há conta,
+servidor ou sincronização. Isso é uma boa fronteira de privacidade para uso
+pessoal, mas não impede que o conteúdo adulto fique visível no código-fonte e
+no bundle público. A senha do easter egg não é uma proteção de conteúdo.
+
+O Pages serve `main:/docs`, está com status `built`, e o bundle publicado
+respondeu com status 200 contendo o build atual. Não foram encontrados
+manifesto PWA, service worker, ícones de instalação ou infraestrutura de
+backend. Portanto, PWA é uma possibilidade futura, não uma capacidade já
+entregue; “virar app” não deve ser apresentado como concluído.
+
+### Decisão registrada e perguntas para o dono
+
+Registro provisório: continuar como web/local e não iniciar app nativo nesta
+rodada; avaliar PWA primeiro somente depois dos P1 e de uma rodada de uso real.
+Foram abertas tarefas de follow-up para os bugs, testes, conteúdo, validação
+mobile, instalação/CI e decisão de produto. A conclusão desta task fica
+delegada para confirmação das decisões abaixo:
+
+1. O uso pessoal no navegador continua sendo o objetivo principal até existir
+   demanda concreta por instalação ou compartilhamento?
+2. Se houver demanda, PWA deve ser o primeiro caminho, deixando app nativo para
+   uma necessidade que a web não cubra?
+3. A política desejada continua sem conta, sem servidor e sem sincronização,
+   aceitando exportar/importar como mecanismo de compartilhamento?
+4. O repositório e o Pages devem continuar públicos com conteúdo adulto, ou o
+   conteúdo precisa de restrição/revisão antes de qualquer divulgação?
+5. Está autorizada uma rodada editorial completa para corrigir truncamentos e
+   tornar consentimento, limites e recusa inequívocos?
+
+### Validação reproduzível desta auditoria
+
+- `npm run typecheck` — passou.
+- `npm test` — passou: 2 arquivos, 21 testes.
+- `npm run build` — passou; gerou `docs/` com os hashes publicados.
+- `npm ci` — falhou por dessincronia do lockfile com pacotes opcionais do
+  esbuild; `npm install --no-audit` permitiu a execução da suíte.
+- `npm audit --omit=dev` — 0 vulnerabilidades de produção no snapshot avaliado.
+- GitHub Pages — configuração `main:/docs`, último deploy observado verde e
+  página/JS/CSS publicados respondendo 200.
+- Navegador físico — não validado nesta rodada; a evidência headless anterior
+  deve ser complementada por Android/iOS real.
