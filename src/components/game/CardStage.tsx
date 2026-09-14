@@ -106,7 +106,9 @@ export function CardStage({
               !card && "text-lg font-normal text-rose-100/50"
             )}
           >
-            {card ? text : "Nenhuma carta com esses filtros. Solta um pouco o nível ou liga mais categorias."}
+            {card
+              ? text
+              : "Nenhuma carta atende aos filtros atuais. Ajuste o nível, as categorias ou as cartas ocultas no painel de ajustes."}
           </p>
 
           <footer className="space-y-3">

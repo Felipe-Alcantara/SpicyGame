@@ -29,6 +29,7 @@ export function FiltersPanel({
   onSetAllCategories: (value: boolean) => void;
 }) {
   const level = LEVELS[levelIndex] ?? "spicy";
+  const hasInactiveCategory = CATEGORIES.some((category) => !cats[category]);
 
   return (
     <Card>
@@ -40,6 +41,30 @@ export function FiltersPanel({
           {poolSize} carta{poolSize === 1 ? "" : "s"} no baralho atual.
         </CardDescription>
       </CardHeader>
+      {poolSize === 0 && (
+        <CardContent className="pt-0">
+          <div
+            role="status"
+            aria-live="polite"
+            className="rounded-2xl border border-amber-300/20 bg-amber-300/10 px-3 py-3 text-sm text-amber-100"
+          >
+            <p className="font-medium">Nenhuma carta atende aos filtros atuais.</p>
+            <p className="mt-1 text-xs text-amber-100/70">
+              Ajuste o nível, as categorias ou reative cartas ocultas. O filtro não usa fallback.
+            </p>
+            {hasInactiveCategory && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-3"
+                onClick={() => onSetAllCategories(true)}
+              >
+                Reativar todas as categorias
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      )}
       <CardContent className="space-y-5">
         <div>
           <div className="mb-2 flex items-center justify-between text-sm">

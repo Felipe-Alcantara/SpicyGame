@@ -75,10 +75,8 @@ export function useGameSession() {
     const byMode = visible.filter((c) => c.mode === currentMode);
     const byLevel = byMode.filter((c) => levelRank(c.level) <= levelIndex);
     const byCats = byLevel.filter((c) => c.cats.some((k) => cats[k]));
-    // se o filtro de categoria zerou tudo, ainda vale jogar o que sobrou do nível
-    if (byCats.length) return byCats;
-    if (byLevel.length) return byLevel;
-    return byMode;
+    // filtros desligados são respeitados: sem correspondência, o pool fica vazio
+    return byCats;
   }, [allCards, hiddenIds, currentMode, levelIndex, cats]);
 
   const poolKey = useMemo(() => pool.map((c) => c.id).join("|"), [pool]);

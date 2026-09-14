@@ -250,6 +250,9 @@ describe("useGameSession — baralho e filtros", () => {
 
     session.update(() => session.get().setAllCategories(false));
     expect(Object.values(session.get().cats).every((value) => value === false)).toBe(true);
+    expect(session.get().poolSize).toBe(0);
+    expect(session.get().deck).toEqual([]);
+    expect(session.get().currentCard).toBeUndefined();
 
     session.update(() => session.get().toggleCategory(category, true));
     current = session.get();

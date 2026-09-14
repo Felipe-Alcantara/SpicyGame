@@ -15,14 +15,12 @@
   340 cartas, interface redesenhada. A auditoria geral desta rodada foi concluída sobre o `origin/main` em `8fedca2`.
 - **Estado final desta rodada**: auditoria técnica registrada; o jogo continua sendo
   uma aplicação web local, sem conta, servidor ou sincronização entre aparelhos.
-- **Próximo passo sugerido**: tratar os achados P1 restantes (filtro de
-  categorias e revisão editorial) e então jogar partidas reais para medir o
-  balanço antes de ampliar o escopo.
-- **Risco aberto**: o filtro de categorias pode cair silenciosamente para todas
-  as cartas do nível; há ao menos uma carta truncada (`n4`) e o conteúdo ainda
-  precisa de revisão editorial. Exportação/importação e a cobertura do hook
-  foram corrigidas nos follow-ups de 2026-09-14. A instalação, lint e CI foram
-  regularizados na entrada abaixo.
+- **Próximo passo sugerido**: jogar partidas reais para medir o balanço e
+  concluir a revisão editorial antes de ampliar o escopo.
+- **Risco aberto**: há ao menos uma carta truncada (`n4`) e o conteúdo ainda
+  precisa de revisão editorial. Exportação/importação, cobertura do hook,
+  instalação, lint, CI e o filtro estrito de categorias foram corrigidos nos
+  follow-ups de 2026-09-14.
 
 ---
 
@@ -536,3 +534,20 @@ compatibilidade legada, versão desconhecida, campos ausentes, cards
 malformados, JSON inválido e garantia de que entradas rejeitadas não alteram o
 estado. No checkout limpo, `npm ci`, `npm run lint`, `npm run typecheck`,
 `npm test` (43 testes), `npm run build` e `npm audit --omit=dev` passaram.
+
+## [2026-09-14] Filtro de categorias sem fallback silencioso
+
+### Decisão
+
+O pool agora é estrito: somente cartas que atendem simultaneamente a modo,
+nível, visibilidade e categorias ativas entram no deck. Quando nenhuma carta
+atende, o pool fica vazio; não existe fallback implícito para `byLevel` ou
+`byMode`, evitando exibir assunto que o usuário desmarcou.
+
+### Experiência e validação
+
+O palco e o painel de filtros comunicam que não há cartas com a combinação
+atual e o painel oferece `Reativar todas as categorias` quando há categorias
+desligadas. Mudança de nível/categoria e cartas ocultas recalculam o pool
+deterministicamente. A suíte cobre combinação sem cards, ocultação e mudanças
+de nível/categoria.
