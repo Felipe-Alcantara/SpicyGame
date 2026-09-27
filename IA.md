@@ -9,18 +9,19 @@
 
 ## 📊 ESTADO ATUAL (RESUMO VIVO)
 
-Última atualização: [2026-09-14]
+Última atualização: [2026-09-27]
 
-- **Fase**: v0.2.1 — easter egg devolvido ao propósito original; refatoração v0.2.0 concluída — app modularizado, baralho expandido para
-  340 cartas, interface redesenhada. A auditoria geral desta rodada foi concluída sobre o `origin/main` em `8fedca2`.
-- **Estado final desta rodada**: auditoria técnica registrada; o jogo continua sendo
-  uma aplicação web local, sem conta, servidor ou sincronização entre aparelhos.
-- **Próximo passo sugerido**: jogar partidas reais para medir o balanço e
-  concluir a revisão editorial antes de ampliar o escopo.
-- **Risco aberto**: há ao menos uma carta truncada (`n4`) e o conteúdo ainda
-  precisa de revisão editorial. Exportação/importação, cobertura do hook,
-  instalação, lint, CI e o filtro estrito de categorias foram corrigidos nos
-  follow-ups de 2026-09-14.
+- **Fase**: v0.2.1 — auditoria geral concluída em duas passadas (14/09 e 27/09);
+  parecer completo em [`AUDITORIA.md`](AUDITORIA.md). Site no ar igual ao `main`.
+- **Decisões do dono (27/09)**: não virar app agora — PWA só se surgir demanda,
+  nativo fora; continuar público com aviso 18+ na primeira visita; seguir 100%
+  local, sem conta nem servidor.
+- **Em andamento**: nada neste repositório.
+- **Próximo passo sugerido**: fazer o desligar de categoria excluir o assunto e
+  guardar o baralho por modo (os dois P1 da auditoria), depois o aviso 18+.
+- **Risco aberto**: desligar uma categoria não tira as cartas dela; alternar
+  modos repete carta; estado salvo malformado deixa a tela branca; revisão
+  editorial das cartas pendente com o casal. Todos com task aberta.
 
 ---
 
@@ -551,3 +552,64 @@ atual e o painel oferece `Reativar todas as categorias` quando há categorias
 desligadas. Mudança de nível/categoria e cartas ocultas recalculam o pool
 deterministicamente. A suíte cobre combinação sem cards, ocultação e mudanças
 de nível/categoria.
+
+## [2026-09-27] Segunda passada da auditoria, decisões do dono e site republicado
+
+### Contexto
+
+A task da auditoria ficou em "Delegar" em 14/09: a pesquisa estava feita, mas
+as perguntas ao dono tinham ido como texto e nunca foram respondidas. Nesta
+rodada as decisões foram tomadas pela ferramenta de pergunta, e a auditoria foi
+refeita com o roteiro que funcionou no Histórias Sinistras: baralho inteiro,
+regras medidas com o hook real, teste por mutação e build medido no navegador.
+O parecer completo, com números e lista de cartas, está em `AUDITORIA.md`.
+
+### Decisões
+
+- **App**: não agora. Se surgir demanda por instalar ou jogar offline, PWA; app
+  nativo fica fora porque Apple e Google recusam conteúdo sexual explícito.
+- **Publicação**: continua público, com aviso 18+ na primeira visita (task
+  aberta). Tornar o repositório privado não esconderia o site: Pages de repo
+  privado exige plano pago e segue público fora do Enterprise Cloud.
+- **Conta e servidor**: continua 100% local, como o dono já tinha escrito na
+  task — é uma qualidade do produto.
+- **Cartas**: corrigir só o objetivamente quebrado e listar o resto para o casal.
+
+### O que a medição achou
+
+- **Site defasado.** `docs/` não foi regerado nos commits de 14/09; o Pages
+  seguiu servindo o bundle de 17/08 com deploy verde. Corrigido em `71dbb6d`, e
+  `abde24e` faz o `Quality` falhar quando `docs/` não bate com o build de `src/`
+  (build conferido idêntico no Node 24 e no 25).
+- **Filtro de categorias não exclui.** A regra "entra se qualquer categoria
+  estiver ligada" faz 88 de 90 cartas de Sexo continuarem com Sexo desligado, e
+  100% das de BDSM, Kink e Sexting. Herdado do monolito. Task aberta.
+- **Sorteio repete ao alternar modos.** Trocar de modo reembaralha; alternando
+  Verdade e Desafio, 69,8% de 500 partidas repetiram carta em 10 rodadas (0% sem
+  trocar). Herdado do monolito. Task aberta.
+- **Tela branca permanente** quando o `localStorage` traz carta sem `cats`: a
+  hidratação não usa o validador da importação. Task aberta.
+- **Mutação**: 10 de 15 quebras eram pegas; com os testes novos, 12. Sobrevivem
+  nível máximo exclusivo, fim do baralho sem reembaralhar e ausência da trava
+  `hydrated`. Task aberta.
+- **Regressões**: nenhuma frente ao monolito; o "pack de sessão" era código morto.
+
+### O que mudou
+
+- `90fe9f1` — `scripts/aplicar-revisao-cartas.mjs`: revisa textos por arquivo
+  com motivo, simula por padrão, grava tudo ou nada e é idempotente.
+- `34f41eb` — cinco cartas quebradas corrigidas (`n4`, `m21`, `t5`, `d17`,
+  `d26`) por `scripts/revisoes/2026-09-27-cartas-quebradas.json`, com três testes
+  que falhavam antes: texto cortado, nome no Mais Provável e artigo com gênero
+  antes de nome sorteado.
+- `71dbb6d` — build atual publicado em `docs/`.
+- `abde24e` — trava de `docs/` no CI e explicação no README.
+
+### Validação
+
+`npm run lint`, `npm run typecheck`, `npm test` (51 testes) e `npm run build`
+limpos. Chromium headless no build, desktop e celular: sem erro de console,
+pool vazio com "Reativar todas as categorias", exportação com os 8 campos e
+arraste no celular. Runs `Quality` 36298643727 e `pages-build-deployment`
+36298643330 com sucesso; o site no ar serve `index-BgaRc73u.js`, igual ao
+`docs/` commitado. **Não testado em aparelho físico.**
