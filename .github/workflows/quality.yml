@@ -38,3 +38,13 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      # O Pages publica main:/docs como está. Se src/ mudou sem regerar docs/,
+      # o site fica com o build antigo e o deploy continua "verde".
+      - name: Published build matches source
+        run: |
+          if [ -n "$(git status --porcelain -- docs)" ]; then
+            echo "::error::docs/ está desatualizado: rode npm run build e commite docs/ junto com a mudança em src/."
+            git status --short -- docs
+            exit 1
+          fi

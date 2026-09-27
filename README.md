@@ -90,6 +90,10 @@ O GitHub Pages deste repositório serve a pasta `docs/` da branch `main`. Ou
 seja: `npm run build` já escreve no lugar certo — basta commitar `docs/` e dar
 push que o site atualiza.
 
+Mudou algo em `src/`? Rode o build e commite `docs/` junto. O workflow
+`Quality` refaz o build e falha se `docs/` não bater com ele — sem isso, uma
+correção pode ficar fora do ar enquanto o deploy continua verde.
+
 ## Estrutura
 
 ```
