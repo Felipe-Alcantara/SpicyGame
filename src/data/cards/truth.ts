@@ -33,7 +33,7 @@ export const TRUTH_CARDS: CardItem[] = [
 
   // ---------- Picante ----------
   { id: "t3", mode: "truth", text: "Qual é a sua maior curiosidade hot sobre nós?", level: "spicy", cats: ["spicy", "deep"] },
-  { id: "t5", mode: "truth", text: "Qual detalhe do {p} você mais repara de perto?", level: "spicy", cats: ["spicy", "deep"] },
+  { id: "t5", mode: "truth", text: "Qual detalhe de {p} você mais repara de perto?", level: "spicy", cats: ["spicy", "deep"] },
   { id: "t9", mode: "truth", text: "O que você quer experimentar juntos pela primeira vez?", level: "spicy", cats: ["spicy", "deep"] },
   { id: "t13", mode: "truth", text: "Existe algo que você tem vontade de sugerir hoje?", level: "spicy", cats: ["spicy"] },
   { id: "t16", mode: "truth", text: "Conte uma história da vida sobre sua pior bebedeira.", level: "spicy", cats: ["drink", "funny"] },

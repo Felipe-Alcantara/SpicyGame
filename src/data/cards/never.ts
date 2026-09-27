@@ -73,7 +73,7 @@ export const NEVER_CARDS: CardItem[] = [
   { id: "n70", mode: "never", text: "Eu nunca tirei foto minha só pra mandar pra alguém.", level: "spicy", cats: ["esex", "spicy"] },
 
   // ---------- Hot ----------
-  { id: "n4", mode: "never", text: "Eu nunca fantasi… sobre {p}.", level: "hot", cats: ["spicy", "deep"] },
+  { id: "n4", mode: "never", text: "Eu nunca fantasiei sobre {p}.", level: "hot", cats: ["spicy", "deep"] },
   { id: "n5", mode: "never", text: "Eu nunca quis algo mais ousado no nosso próximo encontro.", level: "hot", cats: ["spicy", "deep"] },
   { id: "n19", mode: "never", text: "Eu nunca enviei um nude pra {p} durante o dia.", level: "hot", cats: ["spicy", "esex"] },
   { id: "n20", mode: "never", text: "Eu nunca experimentei um kink como spanking com consentimento.", level: "hot", cats: ["kink", "sexual"] },

@@ -20,7 +20,7 @@ export const MOST_CARDS: CardItem[] = [
   { id: "m13", mode: "most", text: "Quem é mais provável de mandar mensagem 'chega logo'?", level: "cute", cats: ["funny"] },
   { id: "m14", mode: "most", text: "Quem é mais provável de ficar corado com um elogio?", level: "cute", cats: ["cute"] },
   { id: "m19", mode: "most", text: "Quem é mais provável de compartilhar uma história de vida engraçada sobre família?", level: "cute", cats: ["funny", "life"] },
-  { id: "m21", mode: "most", text: "Quem é mais provável de ficar obcecado com um hobby e arrastar {p}?", level: "cute", cats: ["funny", "romantic"] },
+  { id: "m21", mode: "most", text: "Quem é mais provável de ficar obcecado com um hobby e arrastar o outro junto?", level: "cute", cats: ["funny", "romantic"] },
   { id: "m26", mode: "most", text: "Quem é mais provável de contar uma história de fantasma da infância?", level: "cute", cats: ["funny", "life"] },
   { id: "m33", mode: "most", text: "Quem é mais provável de contar uma confissão de crush online?", level: "cute", cats: ["confession", "romantic"] },
   { id: "m35", mode: "most", text: "Quem é mais provável de planejar uma noite de histórias da vida real?", level: "cute", cats: ["deep", "life"] },

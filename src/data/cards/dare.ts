@@ -57,11 +57,11 @@ export const DARE_CARDS: CardItem[] = [
 
   // ---------- Hot ----------
   { id: "d5", mode: "dare", text: "{p} escolhe: massagem de 1 minuto OU beijo cinematográfico.", level: "hot", cats: ["spicy"] },
-  { id: "d17", mode: "dare", text: "Roleplay uma cena de vampiro sedutor por 1 minuto.", level: "hot", cats: ["roleplay", "sexual"] },
+  { id: "d17", mode: "dare", text: "Faça um roleplay de vampiro sedutor por 1 minuto.", level: "hot", cats: ["roleplay", "sexual"] },
   { id: "d19", mode: "dare", text: "Simule uma massagem erótica nos ombros de {p} por 30s.", level: "hot", cats: ["spicy", "kink"] },
   { id: "d22", mode: "dare", text: "Experimente um kink leve: segure as mãos de {p} como se fosse bondage.", level: "hot", cats: ["kink", "bdsm"] },
   { id: "d24", mode: "dare", text: "Envie uma mensagem de voz erótica pra {p}.", level: "hot", cats: ["esex", "spicy"] },
-  { id: "d26", mode: "dare", text: "Roleplay uma cena de chefe/funcionário safado por 1 min.", level: "hot", cats: ["roleplay", "kink"] },
+  { id: "d26", mode: "dare", text: "Faça um roleplay de chefe/funcionário safado por 1 min.", level: "hot", cats: ["roleplay", "kink"] },
   { id: "d29", mode: "dare", text: "Simule voyeurismo: observe {p} dançando por 30s sem tocar.", level: "hot", cats: ["kink", "sexual"] },
   { id: "d31", mode: "dare", text: "Beba algo e sugira um jogo de strip poker leve.", level: "hot", cats: ["drink", "spicy"] },
   { id: "d33", mode: "dare", text: "Inicie um roleplay de super-herói erótico.", level: "hot", cats: ["roleplay", "funny"] },

@@ -40,6 +40,25 @@ describe("baralho base", () => {
       expect(card.text).not.toMatch(/\{p[^}2]/);
     }
   });
+
+  it("não publica carta com texto cortado no meio", () => {
+    // Reticências no baralho só apareceram como sobra de texto truncado ("fantasi…").
+    const cortadas = ALL_BASE_CARDS.filter((c) => /…|\.\.\./.test(c.text)).map((c) => c.id);
+    expect(cortadas).toEqual([]);
+  });
+
+  it("não nomeia ninguém no Mais Provável, onde os dois são candidatos", () => {
+    // Com {p} sorteado, metade das vezes a pergunta aponta para a própria resposta.
+    const comNome = CARDS_BY_MODE.most.filter((c) => /\{p2?\}/.test(c.text)).map((c) => c.id);
+    expect(comNome).toEqual([]);
+  });
+
+  it("não põe artigo com gênero na frente de um nome sorteado", () => {
+    // "do {p}" vira "do Ela"; use "de {p}", "pra {p}", "com {p}".
+    const generoFixo = /\b(do|da|no|na|pelo|pela|ao|à)\s+\{p2?\}/i;
+    const erradas = ALL_BASE_CARDS.filter((c) => generoFixo.test(c.text)).map((c) => c.id);
+    expect(erradas).toEqual([]);
+  });
 });
 
 describe("curingas de nome", () => {

@@ -1,0 +1,35 @@
+{
+  "descricao": "Cartas objetivamente quebradas encontradas na leitura integral das 340 cartas da auditoria geral. Só entra aqui o que não depende de gosto: texto cortado, nome sorteado onde não cabe, gênero errado e verbo que não existe em português. Ajustes editoriais (tom, nível, consentimento) ficam fora desta revisão.",
+  "revisoes": [
+    {
+      "id": "n4",
+      "de": "Eu nunca fantasi… sobre {p}.",
+      "para": "Eu nunca fantasiei sobre {p}.",
+      "motivo": "Texto cortado no meio da palavra desde o baralho original (cards.ts de antes da refatoração). Completado com a menor mudança que dá sentido, mantendo o verbo e a preposição da frase."
+    },
+    {
+      "id": "m21",
+      "de": "Quem é mais provável de ficar obcecado com um hobby e arrastar {p}?",
+      "para": "Quem é mais provável de ficar obcecado com um hobby e arrastar o outro junto?",
+      "motivo": "No Mais Provável os dois jogadores são candidatos à resposta. Com {p} sorteado, metade das vezes a pergunta vira 'Ela arrastaria a Ela'. Única carta do modo que nomeava alguém."
+    },
+    {
+      "id": "t5",
+      "de": "Qual detalhe do {p} você mais repara de perto?",
+      "para": "Qual detalhe de {p} você mais repara de perto?",
+      "motivo": "'do {p}' vira 'do Ela' quando o nome sorteado é feminino. 'de {p}' serve para qualquer nome."
+    },
+    {
+      "id": "d17",
+      "de": "Roleplay uma cena de vampiro sedutor por 1 minuto.",
+      "para": "Faça um roleplay de vampiro sedutor por 1 minuto.",
+      "motivo": "'Roleplay' foi usado como verbo no imperativo, forma que não existe em português. Mantidos o tema e o tempo."
+    },
+    {
+      "id": "d26",
+      "de": "Roleplay uma cena de chefe/funcionário safado por 1 min.",
+      "para": "Faça um roleplay de chefe/funcionário safado por 1 min.",
+      "motivo": "Mesmo problema da d17: 'Roleplay' usado como verbo. Mantidos o tema e o tempo."
+    }
+  ]
+}
