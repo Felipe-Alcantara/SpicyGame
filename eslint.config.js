@@ -26,5 +26,12 @@ export default tseslint.config(
         },
       ],
     },
+  },
+  {
+    // Scripts de manutenção rodam no Node, fora do bundle do navegador.
+    files: ["scripts/**/*.mjs"],
+    languageOptions: {
+      globals: globals.node,
+    },
   }
 );

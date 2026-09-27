@@ -122,6 +122,20 @@ Cada carta é um objeto em `src/data/cards/<modo>.ts`:
 
 Depois de mexer no baralho, rode `npm test`.
 
+### Revisando textos em lote
+
+Para corrigir várias cartas de uma vez sem perder o porquê de cada troca,
+escreva um arquivo de revisão em `scripts/revisoes/` — cada item traz `id`,
+o texto atual (`de`), o novo (`para`) e o `motivo` — e rode:
+
+```bash
+node scripts/aplicar-revisao-cartas.mjs scripts/revisoes/<arquivo>.json            # simula
+node scripts/aplicar-revisao-cartas.mjs scripts/revisoes/<arquivo>.json --aplicar  # grava
+```
+
+O script só grava quando todas as revisões batem com o baralho atual, e rodar
+de novo não muda nada. Nível e categorias ainda se editam no arquivo do modo.
+
 ## Aviso
 
 Conteúdo adulto, escrito para duas pessoas que já se conhecem e estão de acordo.
