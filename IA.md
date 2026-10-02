@@ -613,3 +613,45 @@ pool vazio com "Reativar todas as categorias", exportação com os 8 campos e
 arraste no celular. Runs `Quality` 36298643727 e `pages-build-deployment`
 36298643330 com sucesso; o site no ar serve `index-BgaRc73u.js`, igual ao
 `docs/` commitado. **Não testado em aparelho físico.**
+
+## [2026-10-02] Revisão editorial do baralho decidida pelo dono
+
+### Contexto
+
+A segunda passada da auditoria (27/09) corrigiu só o objetivamente quebrado e
+listou o resto na seção 5.2 de `AUDITORIA.md` para o casal decidir. Esta
+entrada fecha essa lista.
+
+### Decisões do dono
+
+- **Consentimento:** reescrever com checagem — nenhuma carta sai; absolutos
+  ("onde quiser", "tudo", "Sem discussão" sem limite) viram "pergunte se topa",
+  "onde {p} deixar" ou "dentro do que vocês combinaram".
+- **Escopo:** aplicar tudo — níveis, categorias, premissas repetidas e linguagem.
+- **Gênero:** neutro sem marca; "(a)" e masculino fixo saem do texto. "O outro"
+  continua como forma de falar do parceiro (é o padrão de dezenas de cartas).
+- **Histórico:** `d67` e `d72` reescritas para não depender do que o app não guarda.
+- **Palavra de segurança (`d63`):** pôr antes das cartas de BDSM mexe no sorteio,
+  que já tem duas tasks P1 abertas; ficou para task própria.
+
+### O que mudou
+
+- `22e97e1` — `scripts/aplicar-revisao-cartas.mjs` aceita `nivel` e `cats` além
+  do texto, valida contra `src/data/taxonomy.ts`, aplica a carta só quando todas
+  as partes batem e move a carta para o fim da seção do novo nível.
+- `3ba18e9` — 56 cartas revisadas por
+  `scripts/revisoes/2026-10-02-revisao-editorial.json`, uma linha de motivo por
+  carta; `docs/` republicado. Escolhas minhas dentro das decisões: `d58` perdeu o
+  "de quatro cartas" ambíguo; repetições resolvidas mantendo `n19`, `d46`, `d56` e
+  `d23` e reescrevendo a outra do par; `d4`/`d14` reescritas para Picante em vez de
+  descer para Fofo (onde virariam a terceira e a quarta carta de dança); `d42`
+  ("beije onde tiver vontade, sem falar nada antes") não estava na lista e ficou.
+
+### Validação
+
+Três testes novos do baralho falharam antes (acusando `n2`, `n24`, `d37`, `d40`,
+`d62`, `d70`; `d67`, `d69`, `d72`; `t58`, `t79`, `t80`) e passaram depois; seis
+testes novos do script falharam antes da extensão. `npm run lint`,
+`npm test` (60 testes) e `npm run build` limpos; a segunda aplicação da revisão
+diz "0 a aplicar"; os quatro arquivos continuam agrupados por nível.
+

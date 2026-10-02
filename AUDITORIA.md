@@ -261,6 +261,17 @@ com gênero antes de nome sorteado.
 
 ### 5.2 Para decisão editorial de vocês
 
+> **Atualização de 02/10/2026 — decidido e aplicado.** O dono escolheu:
+> reescrever com checagem os desafios de consentimento (nenhuma carta saiu),
+> aplicar tudo o que segue (níveis, categorias, repetições, linguagem), gênero
+> neutro sem marca e reescrever `d67`/`d72` para não dependerem de histórico.
+> Aplicado em 56 cartas por `scripts/revisoes/2026-10-02-revisao-editorial.json`
+> (commit `3ba18e9`), com o motivo de cada troca. `d58` perdeu o "de quatro
+> cartas" ambíguo em favor da leitura clara. "O outro" continua sendo o jeito do
+> baralho de falar do parceiro. Pôr `d63` (palavra de segurança) antes das cartas
+> de BDSM mexe no sorteio e ficou para task própria. O texto abaixo é o
+> diagnóstico original, mantido como registro.
+
 Nada daqui foi alterado: é gosto, tom ou limite, e a decisão é do casal.
 
 **Consentimento e limites.** Desafios que agem sobre o outro sem checagem
