@@ -59,6 +59,23 @@ describe("baralho base", () => {
     const erradas = ALL_BASE_CARDS.filter((c) => generoFixo.test(c.text)).map((c) => c.id);
     expect(erradas).toEqual([]);
   });
+
+  it("não marca gênero com '(a)': a carta serve para qualquer casal sem barra nem parêntese", () => {
+    const marcadas = ALL_BASE_CARDS.filter((c) => /\w\((a|o)\)/.test(c.text)).map((c) => c.id);
+    expect(marcadas).toEqual([]);
+  });
+
+  it("não depende de histórico que o app não guarda nem de rodada, que o app não tem", () => {
+    const historico = /nesta partida|já sorteada|da rodada|\brodada\b/i;
+    const dependentes = ALL_BASE_CARDS.filter((c) => historico.test(c.text)).map((c) => c.id);
+    expect(dependentes).toEqual([]);
+  });
+
+  it("usa o imperativo em 'você' (Descreva, Responda), sem misturar com o de 'tu'", () => {
+    const tu = /\b(Descreve|Responde|Fala|Conta)\b(?! (a|o|as|os|um|uma)\b)/;
+    const misturadas = ALL_BASE_CARDS.filter((c) => tu.test(c.text)).map((c) => c.id);
+    expect(misturadas).toEqual([]);
+  });
 });
 
 describe("curingas de nome", () => {

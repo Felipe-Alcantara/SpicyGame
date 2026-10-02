@@ -1,0 +1,408 @@
+{
+  "descricao": "Revisão editorial do baralho decidida pelo dono em 02/10/2026, a partir da leitura integral da auditoria (AUDITORIA.md, seção 5.2): desafios que agem sobre o outro passam a pedir o ok antes; premissas repetidas no mesmo modo viram premissas novas; níveis e categorias incoerentes são corrigidos; gênero fica neutro sem marca; imperativo padronizado em 'você'; cartas que dependiam de histórico ficam autônomas. 'O outro' continua sendo o jeito do baralho de falar do parceiro.",
+  "revisoes": [
+    {
+      "id": "d54",
+      "de": "Vende os olhos de {p} e faça carinho onde quiser por um minuto.",
+      "para": "Pergunte se {p} topa uma venda nos olhos; se topar, faça carinho por um minuto onde {p} deixar.",
+      "motivo": "Consentimento (decisão do dono, 02/10): 'faça carinho onde quiser' agia sobre o outro sem checagem; agora pergunta antes e o limite é de quem está vendado."
+    },
+    {
+      "id": "d55",
+      "de": "Prenda as mãos de {p} e beije do jeito que quiser por 30 segundos.",
+      "para": "Pergunte se {p} topa ter as mãos presas; se topar, beije do seu jeito por 30 segundos.",
+      "motivo": "Consentimento (decisão do dono, 02/10): prender as mãos é contenção; a carta passa a pedir o ok antes. 'Do jeito que quiser' vira 'do seu jeito'."
+    },
+    {
+      "id": "d56",
+      "de": "Faça {p} ficar completamente parado enquanto você provoca por um minuto.",
+      "para": "Peça pra {p} ficar sem se mexer enquanto você provoca por um minuto.",
+      "motivo": "Consentimento (decisão do dono, 02/10): 'Faça {p} ficar parado' impunha; 'peça' deixa a recusa possível. Também tira o masculino de 'parado'."
+    },
+    {
+      "id": "d57",
+      "de": "Tire a roupa de {p} usando só uma mão.",
+      "para": "Pergunte a {p} qual peça pode sair e tire usando só uma mão.",
+      "motivo": "Consentimento (decisão do dono, 02/10): 'Tire a roupa de {p}' não deixava escolha; agora quem é despido decide a peça."
+    },
+    {
+      "id": "d58",
+      "de": "Fique de quatro cartas obedecendo tudo que {p} mandar.",
+      "para": "Pelas próximas quatro cartas, obedeça ao que {p} mandar — dentro do que vocês combinaram.",
+      "motivo": "Consentimento (decisão do dono, 02/10): 'obedecendo tudo' sem limite; agora vale o combinado. 'Fique de quatro cartas' era ambíguo (trocadilho ou erro): a leitura clara venceu."
+    },
+    {
+      "id": "d62",
+      "de": "Provoque {p} por um minuto inteiro sem deixar ele(a) te tocar.",
+      "para": "Por um minuto, suas mãos só tocam onde {p} levar.",
+      "motivo": "Consentimento (decisão do dono, 02/10): e premissa repetida: d62 era quase igual a d56 (provocar sem deixar tocar). Virou o inverso — quem é tocado conduz —, o que também tira o 'ele(a)'."
+    },
+    {
+      "id": "d67",
+      "de": "Realize agora a última fantasia que você confessou nesta partida.",
+      "para": "Conte uma fantasia pra {p} e realizem agora a parte que os dois toparem.",
+      "motivo": "Dependia de histórico que o app não guarda (decisão do dono, 02/10): 'a última fantasia que você confessou nesta partida' podia cair antes de qualquer confissão. Também ganhou checagem: só a parte que os dois toparem."
+    },
+    {
+      "id": "d68",
+      "de": "{p} manda em tudo pelos próximos cinco minutos. Sem discussão.",
+      "para": "{p} manda pelos próximos cinco minutos, dentro do que vocês já combinaram. Sem discussão.",
+      "motivo": "Consentimento (decisão do dono, 02/10): 'manda em tudo... Sem discussão' sem limite; agora o 'sem discussão' vale dentro do que já foi combinado."
+    },
+    {
+      "id": "t72",
+      "de": "Qual limite seu você acha que cairia na noite certa?",
+      "para": "O que hoje é um 'não' pra você e poderia virar um 'talvez' um dia? O que precisaria acontecer?",
+      "motivo": "Consentimento (decisão do dono, 02/10): 'qual limite cairia na noite certa' sugeria que limite cai com pressão; agora a pergunta é sobre condições, sem empurrar ninguém."
+    },
+    {
+      "id": "d72",
+      "de": "Deixe {p} escolher qualquer carta nuclear já sorteada pra você repetir.",
+      "para": "Deixe {p} escolher o próximo desafio pra você — valendo só o que vocês já combinaram.",
+      "motivo": "Dependia de histórico que o app não guarda (decisão do dono, 02/10): 'carta nuclear já sorteada' podia não existir ainda; virou carta autônoma, com o limite do combinado."
+    },
+    {
+      "id": "d70",
+      "de": "Provoque {p} até ele(a) pedir pra você parar de provocar.",
+      "para": "Provoque {p} até ouvir um 'para' — e aí pare na hora.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira o 'ele(a)' e deixa explícito que o 'para' é obedecido na hora."
+    },
+    {
+      "id": "n74",
+      "de": "Eu nunca mandei nude no meio do expediente.",
+      "para": "Eu nunca recebi um nude em hora errada e tive que disfarçar.",
+      "motivo": "Premissa repetida no mesmo modo (decisão do dono: aplicar tudo, 02/10): n74 (nude no expediente) repetia n19 (nude durante o dia). Mantida a n19; n74 vira o outro lado: receber."
+    },
+    {
+      "id": "d24",
+      "de": "Envie uma mensagem de voz erótica pra {p}.",
+      "para": "Tire uma foto sugestiva sua e mande pra {p} agora — mesmo estando do lado.",
+      "motivo": "Premissa repetida no mesmo modo (decisão do dono: aplicar tudo, 02/10): d24 (mensagem de voz erótica) repetia d46 (áudio safadinho). Mantida a d46; d24 troca o áudio por foto sugestiva, no mesmo nível e categorias."
+    },
+    {
+      "id": "d4",
+      "de": "Escolha uma música e façam uma mini-dança juntinhos por 30s.",
+      "para": "Escolha uma música e dance só pra {p} por 30s, do jeito mais provocante que conseguir.",
+      "cats": {
+        "de": [
+          "funny"
+        ],
+        "para": [
+          "spicy",
+          "funny"
+        ]
+      },
+      "motivo": "Premissa repetida no mesmo modo (decisão do dono: aplicar tudo, 02/10): d4, d14 e d23 eram 'dançar colados'. Mantida a d23 (Fofo); d4 vira dança provocante solo, à altura do Picante (a auditoria também a achou suave demais). Acompanha o texto novo: a carta passa a ser picante, não só engraçada."
+    },
+    {
+      "id": "d14",
+      "de": "Ouçam 1 minuto de uma música que combine com a vibe e dancem coladinhos.",
+      "para": "Faça {p} adivinhar, só pelo seu olhar, o que você quer agora. Três tentativas.",
+      "cats": {
+        "de": [
+          "funny"
+        ],
+        "para": [
+          "spicy",
+          "funny"
+        ]
+      },
+      "motivo": "Premissa repetida no mesmo modo (decisão do dono: aplicar tudo, 02/10): d14 era a terceira carta de dançar colados; vira um desafio novo de Picante (a auditoria também a achou suave demais). Acompanha o texto novo."
+    },
+    {
+      "id": "n10",
+      "nivel": {
+        "de": "spicy",
+        "para": "cute"
+      },
+      "motivo": "Nível (decisão do dono: aplicar tudo, 02/10): 'ciúmes por algo bobo' não tem nada de picante."
+    },
+    {
+      "id": "m79",
+      "nivel": {
+        "de": "nuclear",
+        "para": "spicy"
+      },
+      "motivo": "Nível (decisão do dono: aplicar tudo, 02/10): 'mentir hoje nesse jogo' é leve para Nuclear; Picante combina com a provocação."
+    },
+    {
+      "id": "d5",
+      "nivel": {
+        "de": "hot",
+        "para": "spicy"
+      },
+      "motivo": "Nível (decisão do dono: aplicar tudo, 02/10): massagem de 1 minuto ou beijo cinematográfico é leve para Hot."
+    },
+    {
+      "id": "n67",
+      "nivel": {
+        "de": "spicy",
+        "para": "hot"
+      },
+      "motivo": "Nível (decisão do dono: aplicar tudo, 02/10): 'fingi orgasmo' é explícita para Picante."
+    },
+    {
+      "id": "n69",
+      "nivel": {
+        "de": "spicy",
+        "para": "hot"
+      },
+      "motivo": "Nível (decisão do dono: aplicar tudo, 02/10): 'me toquei pensando em quem tava do meu lado' é explícita para Picante."
+    },
+    {
+      "id": "n17",
+      "cats": {
+        "de": [
+          "funny",
+          "deep"
+        ],
+        "para": [
+          "drink",
+          "deep"
+        ]
+      },
+      "motivo": "Categoria incoerente (decisão do dono: aplicar tudo, 02/10): fala de bebida sem ter 'Bebida'; 'Engraçado' saiu para manter duas categorias."
+    },
+    {
+      "id": "n54",
+      "cats": {
+        "de": [
+          "funny",
+          "esex"
+        ],
+        "para": [
+          "funny",
+          "confession"
+        ]
+      },
+      "motivo": "Categoria incoerente (decisão do dono: aplicar tudo, 02/10): estava em 'Sexting' sem nada de sexting; é uma confissão."
+    },
+    {
+      "id": "n58",
+      "cats": {
+        "de": [
+          "funny",
+          "esex"
+        ],
+        "para": [
+          "funny",
+          "confession"
+        ]
+      },
+      "motivo": "Categoria incoerente (decisão do dono: aplicar tudo, 02/10): estava em 'Sexting' sem nada de sexting; é uma confissão."
+    },
+    {
+      "id": "m54",
+      "cats": {
+        "de": [
+          "funny",
+          "drink"
+        ],
+        "para": [
+          "funny"
+        ]
+      },
+      "motivo": "Categoria incoerente (decisão do dono: aplicar tudo, 02/10): tinha 'Bebida' sem bebida nenhuma no texto."
+    },
+    {
+      "id": "n60",
+      "cats": {
+        "de": [
+          "confession",
+          "drink"
+        ],
+        "para": [
+          "confession",
+          "spicy"
+        ]
+      },
+      "motivo": "Categoria incoerente (decisão do dono: aplicar tudo, 02/10): tinha 'Bebida' só por ser em festa; o assunto é ficar com duas pessoas."
+    },
+    {
+      "id": "n2",
+      "de": "Eu nunca dormi abraçado(a) a noite toda.",
+      "para": "Eu nunca dormi de conchinha a noite toda.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'abraçado(a)'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n22",
+      "de": "Eu nunca viajei sozinho e pensei em levar {p} na próxima.",
+      "para": "Eu nunca fiz uma viagem solo e pensei em levar {p} na próxima.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'sozinho'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n24",
+      "de": "Eu nunca quis ser dominado(a) em uma cena BDSM leve.",
+      "para": "Eu nunca quis que alguém me dominasse numa cena BDSM leve.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'dominado(a)'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n34",
+      "de": "Eu nunca usei brinquedos sexuais sozinho pensando em {p}.",
+      "para": "Eu nunca usei um brinquedo sexual pensando em {p}.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'sozinho' (e 'brinquedos' no plural sem motivo); a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n39",
+      "de": "Eu nunca deixei alguém no vácuo de propósito só pra parecer ocupado.",
+      "para": "Eu nunca deixei alguém no vácuo de propósito só pra fazer charme.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'ocupado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n44",
+      "de": "Eu nunca dormi no sofá vendo filme e fingi que tava acordado.",
+      "para": "Eu nunca cochilei no sofá vendo filme e jurei que não tinha dormido.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'acordado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n47",
+      "de": "Eu nunca fiquei acordado até tarde só pra não encerrar a conversa.",
+      "para": "Eu nunca virei a madrugada só pra não encerrar a conversa.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'acordado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n66",
+      "de": "Eu nunca usei a desculpa de 'ver o teto' pra ficar sozinho com alguém.",
+      "para": "Eu nunca usei a desculpa de 'ver o teto' pra ficar a sós com alguém.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'sozinho'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n78",
+      "de": "Eu nunca fui amordaçado ou vendado.",
+      "para": "Eu nunca deixei alguém me amordaçar ou me vendar.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'amordaçado ou vendado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n82",
+      "de": "Eu nunca terminei sozinho depois que o outro dormiu.",
+      "para": "Eu nunca terminei por conta própria depois que o outro dormiu.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'sozinho' ('o outro' segue o padrão do baralho para o parceiro); a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n95",
+      "de": "Eu nunca fui flagrado no meio do ato.",
+      "para": "Eu nunca levei um flagra no meio do ato.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'flagrado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "n99",
+      "de": "Eu nunca gozei só de ser tocado por cima da roupa.",
+      "para": "Eu nunca gozei só com um toque por cima da roupa.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'tocado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "t23",
+      "de": "Qual bebida te deixa mais ousado em conversas?",
+      "para": "Qual bebida te solta mais a língua numa conversa?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'ousado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "t63",
+      "de": "Você prefere ser vendado ou vendar o outro? Por quê?",
+      "para": "Você prefere vendar ou ter os olhos vendados? Por quê?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'ser vendado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "d59",
+      "de": "Mostre em {p} exatamente como você gosta de ser tocado.",
+      "para": "Mostre em {p} exatamente o toque que você mais gosta de receber.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'tocado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "d65",
+      "de": "Coloque a mão de {p} onde você mais quer ser tocado agora.",
+      "para": "Coloque a mão de {p} onde você mais quer um toque agora.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'tocado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "d37",
+      "de": "Imite {p} até ele(a) adivinhar o que você tá imitando.",
+      "para": "Imite {p} até sair o palpite certo do que você tá imitando.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'ele(a)'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "d40",
+      "de": "Diga três coisas que você ama em {p} sem usar 'legal' nem 'bonito(a)'.",
+      "para": "Diga três coisas que você ama em {p} sem usar 'legal' nem falar da aparência.",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'bonito(a)'; a regra (não elogiar o óbvio) continua; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "m14",
+      "de": "Quem é mais provável de ficar corado com um elogio?",
+      "para": "Quem é mais provável de corar com um elogio?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'corado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "m21",
+      "de": "Quem é mais provável de ficar obcecado com um hobby e arrastar o outro junto?",
+      "para": "Quem é mais provável de se obcecar por um hobby e arrastar o outro junto?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'obcecado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "m46",
+      "de": "Quem é mais provável de ficar bêbado primeiro hoje?",
+      "para": "Quem é mais provável de sentir a bebida primeiro hoje?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'bêbado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "m48",
+      "de": "Quem é mais provável de dar uma secada e ser pego no flagra?",
+      "para": "Quem é mais provável de dar uma secada e levar um flagra?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'pego'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "m66",
+      "de": "Quem é mais provável de topar ser vendado?",
+      "para": "Quem é mais provável de topar uma venda nos olhos?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'vendado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "m74",
+      "de": "Quem é mais provável de ser flagrado transando?",
+      "para": "Quem é mais provável de levar um flagra transando?",
+      "motivo": "Gênero neutro sem marca (decisão do dono, 02/10): tira 'flagrado'; a carta lê igual para qualquer pessoa."
+    },
+    {
+      "id": "t79",
+      "de": "Descreve em detalhe a cena que você mais repete na cabeça.",
+      "para": "Descreva em detalhe a cena que você mais repete na cabeça.",
+      "motivo": "Linguagem: 'Descreve' (tu) no meio de 'Descreva' (você) em t20, t25 e t35."
+    },
+    {
+      "id": "t58",
+      "de": "Você prefere mandar ou obedecer? Responde sem enrolar.",
+      "para": "Você prefere mandar ou obedecer? Responda sem enrolar.",
+      "motivo": "Linguagem: 'Responde' (tu) → 'Responda' (você), como no resto do baralho."
+    },
+    {
+      "id": "t70",
+      "de": "Qual é a fantasia que você nunca contou pra ninguém? Agora conta.",
+      "para": "Qual é a fantasia que você nunca contou pra ninguém? Agora conte.",
+      "motivo": "Linguagem: 'Agora conta' (tu) → 'Agora conte' (você)."
+    },
+    {
+      "id": "t80",
+      "de": "Tem alguma coisa que você quer que a gente pare de fazer? Fala agora.",
+      "para": "Tem alguma coisa que você quer que a gente pare de fazer? Fale agora.",
+      "motivo": "Linguagem: 'Fala agora' (tu) → 'Fale agora' (você)."
+    },
+    {
+      "id": "t26",
+      "de": "Conte uma confissão de internet que você viu e se identificou.",
+      "para": "Conte uma confissão de internet com a qual você se identificou.",
+      "motivo": "Linguagem: faltava a preposição: 'que você viu e se identificou'."
+    },
+    {
+      "id": "t43",
+      "de": "Qual é o seu maior clichê romântico favorito?",
+      "para": "Qual é o seu clichê romântico favorito?",
+      "motivo": "Linguagem: 'maior ... favorito' era redundante."
+    },
+    {
+      "id": "d69",
+      "de": "Fiquem completamente sem roupa até o fim da rodada.",
+      "para": "Fiquem completamente sem roupa pelas próximas cinco cartas.",
+      "motivo": "Linguagem: 'até o fim da rodada', e o app não tem rodada; contar cartas é o padrão de d44 e d51."
+    }
+  ]
+}
