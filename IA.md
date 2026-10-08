@@ -655,3 +655,47 @@ testes novos do script falharam antes da extensão. `npm run lint`,
 `npm test` (60 testes) e `npm run build` limpos; a segunda aplicação da revisão
 diz "0 a aplicar"; os quatro arquivos continuam agrupados por nível.
 
+## [2026-10-08] Filtro de categorias com limites, rótulos novos e filtros por visita
+
+### Contexto
+
+A auditoria de 27/09 mediu que o filtro incluía a carta quando qualquer
+categoria dela estava ligada: com "Sexo" desligado, 88 das 90 cartas de Sexo
+continuavam entrando, e 100% das de BDSM, Kink e Sexting. O registro de 14/09
+deste arquivo dizia que o filtro evitava "exibir assunto que o usuário
+desmarcou" — isso só valia ao desligar tudo.
+
+### Decisões do dono (08/10, pela ferramenta de pergunta)
+
+- **Regra:** Sexo, Kink, BDSM e Sexting são limites — desligado, sai toda carta
+  com o assunto. As outras categorias são assuntos: a carta entra se tiver pelo
+  menos um ligado. Alternativas recusadas: Bebida também como limite; exclusão
+  para todas (ligar só "Fofo" daria 19 cartas em vez de 48).
+- **Rótulos:** as categorias `cute` e `spicy` viram "Carinho" e "Sensual"; os
+  níveis ficam Fofo, Picante, Hot e Nuclear.
+- **Memória:** os filtros valem só para a visita; ao abrir de novo, tudo volta
+  ligado. (A recomendação era manter salvo, para um limite nunca sumir sozinho;
+  o painel agora avisa isso.)
+
+### O que mudou
+
+- `5ae663e` — `LIMIT_CATEGORIES` e `TOPIC_CATEGORIES` em `src/data/taxonomy.ts`;
+  o `pool` de `useGameSession` exige alguma categoria ligada **e** nenhum limite
+  desligado; `FiltersPanel` em dois blocos com a regra de cada um numa frase;
+  "O filtro não usa fallback." trocado por uma instrução.
+- `4f57f72` — `PersistedState` sem `cats`; a hidratação ignora `cats` de estado
+  antigo; export/import seguem com o filtro em uso pelo tipo `TransferableState`.
+
+### Validação
+
+Testes escritos antes, falhando: limite vazando em todo modo/nível (`n88`,
+`n30`, `n73`… com Sexo desligado), rótulo repetido entre nível e categoria e as
+três expectativas de hidratação. Um teste de guarda (assunto desligado mantém a
+carta que tem outro assunto) já passava e segue passando. Depois: lint,
+typecheck, `npm test` (63) e build limpos nos dois commits. Chromium headless
+sobre o build, desktop 1280×900 e celular 390×844: Eu Nunca até Nuclear 105 →
+75 cartas com Sexo desligado (bate com a medição direta do baralho), blocos
+Limites/Assuntos, "Carinho"/"Sensual", nenhuma ocorrência de "fallback",
+recarregar volta Sexo ligado e mantém o nível, sem erro de console. **Não
+testado em aparelho físico.**
+

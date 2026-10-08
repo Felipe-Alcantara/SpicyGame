@@ -67,7 +67,15 @@ ficou listado para vocês decidirem (seção 5).
 Escala: **P1** regra central quebrada ou risco para quem joga · **P2** robustez e
 experiência · **P3** polimento.
 
-### P1 — O filtro de categorias não exclui o assunto desligado
+### P1 — O filtro de categorias não exclui o assunto desligado · **resolvido em 08/10**
+
+> **Atualização de 08/10/2026.** Decisão do dono: Sexo, Kink, BDSM e Sexting
+> viram limites (desligado, sai toda carta com o assunto); as demais seguem como
+> assuntos. As categorias "Fofo" e "Picante" viraram "Carinho" e "Sensual", e os
+> filtros deixaram de ser salvos — toda visita começa com tudo ligado. Commits
+> `5ae663e` e `4f57f72`. Medido no navegador: Eu Nunca até Nuclear passa de 105
+> para 75 cartas com Sexo desligado, sem nenhuma de Sexo. O texto abaixo é o
+> diagnóstico original.
 
 `useGameSession.ts` inclui a carta quando **qualquer** categoria dela está
 ligada (`c.cats.some((k) => cats[k])`). Como só 51 das 340 cartas têm uma
