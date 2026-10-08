@@ -9,7 +9,10 @@ aparelho.
 - **Quatro modos**: Eu Nunca, Quem é Mais Provável, Verdade e Desafio.
 - **340 cartas** no baralho base, divididas em quatro níveis de intensidade
   (Fofo → Picante → Hot → Nuclear) e 15 categorias.
-- **Filtros**: escolha até que nível quer ir e quais assuntos entram na roda.
+- **Filtros**: escolha até que nível quer ir e quais categorias entram na roda.
+  Sexo, Kink, BDSM e Sexting são **limites**: desligado, sai toda carta com o
+  assunto, mesmo que ela tenha outra categoria ligada. As outras categorias são
+  **assuntos**: a carta entra se tiver pelo menos um ligado.
 - **Placar de goles** por jogador.
 - **Cartas suas**: criar, editar, duplicar as do baralho base e ocultar as que
   não têm a ver com vocês.

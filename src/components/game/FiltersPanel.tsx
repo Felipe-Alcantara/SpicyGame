@@ -6,6 +6,8 @@ import {
   LEVELS,
   LEVEL_LABELS,
   LEVEL_THEME,
+  LIMIT_CATEGORIES,
+  TOPIC_CATEGORIES,
 } from "../../data/taxonomy";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../ui/Card";
 import { Button } from "../ui/Button";
@@ -50,7 +52,7 @@ export function FiltersPanel({
           >
             <p className="font-medium">Nenhuma carta atende aos filtros atuais.</p>
             <p className="mt-1 text-xs text-amber-100/70">
-              Ajuste o nível, as categorias ou reative cartas ocultas. O filtro não usa fallback.
+              Suba o nível, ligue mais categorias ou reative cartas ocultas.
             </p>
             {hasInactiveCategory && (
               <Button
@@ -93,24 +95,20 @@ export function FiltersPanel({
           </p>
         </div>
 
-        <div>
-          <div className="mb-2 text-sm">Categorias</div>
-          <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-            {CATEGORIES.map((c) => (
-              <label
-                key={c}
-                className="flex cursor-pointer items-center justify-between gap-2 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm"
-              >
-                <span>{CATEGORY_LABELS[c]}</span>
-                <Switch
-                  label={CATEGORY_LABELS[c]}
-                  checked={cats[c]}
-                  onCheckedChange={(v) => onToggleCategory(c, v)}
-                />
-              </label>
-            ))}
-          </div>
-        </div>
+        <CategoryGroup
+          title="Limites"
+          hint="Desligado, nenhuma carta com o assunto entra — mesmo que ela tenha outra categoria ligada."
+          categories={LIMIT_CATEGORIES}
+          cats={cats}
+          onToggleCategory={onToggleCategory}
+        />
+        <CategoryGroup
+          title="Assuntos"
+          hint="Entra a carta que tiver pelo menos um assunto ligado."
+          categories={TOPIC_CATEGORIES}
+          cats={cats}
+          onToggleCategory={onToggleCategory}
+        />
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
         <Button variant="ghost" size="sm" onClick={() => onSetAllCategories(false)}>
@@ -121,5 +119,42 @@ export function FiltersPanel({
         </Button>
       </CardFooter>
     </Card>
+  );
+}
+
+/** Um bloco de interruptores de categoria com a regra dele explicada numa frase. */
+function CategoryGroup({
+  title,
+  hint,
+  categories,
+  cats,
+  onToggleCategory,
+}: {
+  title: string;
+  hint: string;
+  categories: Category[];
+  cats: Record<Category, boolean>;
+  onToggleCategory: (cat: Category, value: boolean) => void;
+}) {
+  return (
+    <div>
+      <div className="text-sm">{title}</div>
+      <p className="mb-2 mt-0.5 text-xs text-rose-100/40">{hint}</p>
+      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+        {categories.map((c) => (
+          <label
+            key={c}
+            className="flex cursor-pointer items-center justify-between gap-2 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm"
+          >
+            <span>{CATEGORY_LABELS[c]}</span>
+            <Switch
+              label={CATEGORY_LABELS[c]}
+              checked={cats[c]}
+              onCheckedChange={(v) => onToggleCategory(c, v)}
+            />
+          </label>
+        ))}
+      </div>
+    </div>
   );
 }

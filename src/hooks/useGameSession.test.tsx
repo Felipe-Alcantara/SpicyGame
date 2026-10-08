@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { act, create, type ReactTestRenderer } from "react-test-renderer";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { CATEGORIES, levelRank, type CardItem, type Category } from "../data/taxonomy";
+import { CATEGORIES, LEVELS, MODES, levelRank, type CardItem, type Category } from "../data/taxonomy";
 import { STORAGE_KEY } from "../lib/storage";
 import { EXPORT_FORMAT_VERSION } from "../lib/stateTransfer";
 import { MemoryStorage } from "../test-utils";
@@ -268,6 +268,42 @@ describe("useGameSession — baralho e filtros", () => {
 
     session.update(() => session.get().toggleHidden(hiddenId));
     expect(session.get().hiddenIds).not.toContain(hiddenId);
+  });
+
+  it("tira do baralho toda carta de um limite desligado, em todo modo e nível", () => {
+    const limites: Category[] = ["sexual", "kink", "bdsm", "esex"];
+    const session = startSession();
+    for (const limite of limites) {
+      session.update(() => {
+        session.get().setAllCategories(true);
+        session.get().toggleCategory(limite, false);
+      });
+      for (const mode of MODES) {
+        for (const [levelIndex] of LEVELS.entries()) {
+          session.update(() => {
+            session.get().setCurrentMode(mode);
+            session.get().setLevelIndex(levelIndex);
+          });
+          const { deck, poolSize } = session.get();
+          const vazadas = deck.filter((card) => card.cats.includes(limite)).map((card) => card.id);
+          expect(vazadas, `${limite} desligado em ${mode}/${LEVELS[levelIndex]}`).toEqual([]);
+          expect(poolSize).toBe(deck.length);
+        }
+      }
+    }
+  });
+
+  it("mantém a carta de um assunto desligado quando ela tem outro assunto ligado", () => {
+    const session = startSession();
+    session.update(() => {
+      session.get().setCurrentMode("never");
+      session.get().setLevelIndex(LEVELS.length - 1);
+      session.get().toggleCategory("funny", false);
+    });
+    const { deck } = session.get();
+    // "Zoeira" é assunto, não limite: sai só a carta que não tem outro assunto ligado
+    expect(deck.some((card) => card.cats.includes("funny"))).toBe(true);
+    expect(deck.every((card) => card.cats.some((cat) => cat !== "funny"))).toBe(true);
   });
 
   it("mantém as operações seguras quando todos os cards do modo estão ocultos", () => {

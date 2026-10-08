@@ -64,6 +64,19 @@ export const CATEGORIES: Category[] = [
   "sexual",
 ];
 
+/**
+ * Categorias que funcionam como limite: desligada, sai do baralho toda carta
+ * que tenha o assunto, mesmo que a carta tenha outra categoria ligada. É o
+ * jeito de o casal dizer "hoje sem BDSM". Decisão do dono em 08/10/2026.
+ */
+export const LIMIT_CATEGORIES: Category[] = ["sexual", "kink", "bdsm", "esex"];
+
+/**
+ * As demais categorias são assuntos: a carta entra quando pelo menos uma das
+ * categorias dela está ligada. Mesma ordem de `CATEGORIES`.
+ */
+export const TOPIC_CATEGORIES: Category[] = CATEGORIES.filter((c) => !LIMIT_CATEGORIES.includes(c));
+
 export const MODE_LABELS: Record<Mode, string> = {
   never: "Eu Nunca",
   most: "Mais Provável",
@@ -110,9 +123,10 @@ export const LEVEL_THEME: Record<Level, { chip: string; glow: string; accent: st
 };
 
 export const CATEGORY_LABELS: Record<Category, string> = {
-  cute: "Fofo",
+  // "Fofo" e "Picante" são nomes de nível; a categoria usa outro nome
+  cute: "Carinho",
   funny: "Zoeira",
-  spicy: "Picante",
+  spicy: "Sensual",
   deep: "Profundo",
   kink: "Kink",
   bdsm: "BDSM",

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { ALL_BASE_CARDS, CARDS_BY_MODE } from ".";
-import { CATEGORIES, LEVELS, MODES } from "../taxonomy";
+import { CATEGORIES, CATEGORY_LABELS, LEVEL_LABELS, LEVELS, MODES } from "../taxonomy";
 import { replacePlaceholders } from "../../lib/placeholders";
 
 describe("baralho base", () => {
@@ -75,6 +75,14 @@ describe("baralho base", () => {
     const tu = /\b(Descreve|Responde|Fala|Conta)\b(?! (a|o|as|os|um|uma)\b)/;
     const misturadas = ALL_BASE_CARDS.filter((c) => tu.test(c.text)).map((c) => c.id);
     expect(misturadas).toEqual([]);
+  });
+});
+
+describe("rótulos", () => {
+  it("não repete nome entre nível e categoria, para o filtro não confundir os dois eixos", () => {
+    const niveis = new Set(Object.values(LEVEL_LABELS));
+    const repetidos = Object.values(CATEGORY_LABELS).filter((rotulo) => niveis.has(rotulo));
+    expect(repetidos).toEqual([]);
   });
 });
 

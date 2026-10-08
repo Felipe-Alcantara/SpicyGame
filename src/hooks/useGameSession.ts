@@ -12,6 +12,7 @@ import {
   CardItem,
   Category,
   CATEGORIES,
+  LIMIT_CATEGORIES,
   Level,
   LEVELS,
   Mode,
@@ -74,7 +75,12 @@ export function useGameSession() {
     const visible = allCards.filter((c) => !hiddenIds.includes(c.id));
     const byMode = visible.filter((c) => c.mode === currentMode);
     const byLevel = byMode.filter((c) => levelRank(c.level) <= levelIndex);
-    const byCats = byLevel.filter((c) => c.cats.some((k) => cats[k]));
+    // assunto: basta uma categoria ligada; limite: qualquer limite desligado tira a carta
+    const byCats = byLevel.filter(
+      (c) =>
+        c.cats.some((k) => cats[k]) &&
+        !c.cats.some((k) => LIMIT_CATEGORIES.includes(k) && !cats[k])
+    );
     // filtros desligados são respeitados: sem correspondência, o pool fica vazio
     return byCats;
   }, [allCards, hiddenIds, currentMode, levelIndex, cats]);
