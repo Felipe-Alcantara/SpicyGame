@@ -12,7 +12,8 @@ aparelho.
 - **Filtros**: escolha até que nível quer ir e quais categorias entram na roda.
   Sexo, Kink, BDSM e Sexting são **limites**: desligado, sai toda carta com o
   assunto, mesmo que ela tenha outra categoria ligada. As outras categorias são
-  **assuntos**: a carta entra se tiver pelo menos um ligado.
+  **assuntos**: a carta entra se tiver pelo menos um ligado. Os filtros valem
+  para a visita — ao abrir o jogo de novo, tudo volta ligado.
 - **Placar de goles** por jogador.
 - **Cartas suas**: criar, editar, duplicar as do baralho base e ocultar as que
   não têm a ver com vocês.
@@ -21,7 +22,9 @@ aparelho.
 - **Funciona no celular**: carta arrastável, painel de ajustes em gaveta e
   atalhos de teclado (`←` `→` e espaço) no computador.
 
-Tudo o que você configura fica salvo no `localStorage` do próprio navegador.
+Jogadores, modo, nível, cartas próprias, cartas ocultas e placar ficam salvos no
+`localStorage` do próprio navegador. As categorias não: os limites valem só para
+a visita.
 
 ### Formato de exportação e importação
 

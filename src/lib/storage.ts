@@ -6,18 +6,22 @@
  * ler um estado antigo incompatível.
  */
 
-import { CardItem, Category, Mode } from "../data/taxonomy";
+import { CardItem, Mode } from "../data/taxonomy";
 
 export const STORAGE_KEY = "spicy-game-state-v2";
 
 /** Chave da versão anterior, migrada automaticamente na primeira carga. */
 const LEGACY_STORAGE_KEY = "couple-night-state-v1";
 
+/**
+ * O que fica salvo entre visitas. As categorias ficam de fora de propósito:
+ * os limites ("hoje sem BDSM") valem só para a visita (decisão de 08/10/2026).
+ * Estados antigos que ainda trazem `cats` são lidos e o campo é ignorado.
+ */
 export interface PersistedState {
   players: string[];
   currentMode: Mode;
   levelIndex: number;
-  cats: Record<Category, boolean>;
   customCards: CardItem[];
   hiddenIds: string[];
   scores: Record<string, number>;

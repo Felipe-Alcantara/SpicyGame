@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 
 import { CATEGORIES, type Category } from "../data/taxonomy";
-import type { PersistedState } from "./storage";
 import {
   EXPORT_FORMAT_VERSION,
   parseGameState,
   serializeGameState,
+  type TransferableState,
 } from "./stateTransfer";
 
 function categories(overrides: Partial<Record<Category, boolean>> = {}): Record<Category, boolean> {
@@ -14,7 +14,7 @@ function categories(overrides: Partial<Record<Category, boolean>> = {}): Record<
   ) as Record<Category, boolean>;
 }
 
-function makeState(): PersistedState {
+function makeState(): TransferableState {
   return {
     players: ["Ana", "Bia"],
     currentMode: "truth",

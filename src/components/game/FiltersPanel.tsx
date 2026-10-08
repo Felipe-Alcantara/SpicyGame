@@ -109,6 +109,9 @@ export function FiltersPanel({
           cats={cats}
           onToggleCategory={onToggleCategory}
         />
+        <p className="text-xs text-rose-100/40">
+          Os filtros valem para esta visita: ao abrir o jogo de novo, tudo volta ligado.
+        </p>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
         <Button variant="ghost" size="sm" onClick={() => onSetAllCategories(false)}>

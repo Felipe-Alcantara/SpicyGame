@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { CATEGORIES, type Category } from "../data/taxonomy";
 import { MemoryStorage } from "../test-utils";
 import {
   clearState,
@@ -12,19 +11,11 @@ import {
 
 const LEGACY_STORAGE_KEY = "couple-night-state-v1";
 
-function allCategoriesOn(): Record<Category, boolean> {
-  return Object.fromEntries(CATEGORIES.map((category) => [category, true])) as Record<
-    Category,
-    boolean
-  >;
-}
-
 function makeState(overrides: Partial<PersistedState> = {}): PersistedState {
   return {
     players: ["Ela", "Ele"],
     currentMode: "never",
     levelIndex: 1,
-    cats: allCategoriesOn(),
     customCards: [],
     hiddenIds: [],
     scores: {},

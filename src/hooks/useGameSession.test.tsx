@@ -93,7 +93,7 @@ function startSession(): MountedSession {
 }
 
 describe("useGameSession — hidratação e persistência", () => {
-  it("hidrata o estado salvo, mescla categorias novas e monta o baralho", () => {
+  it("hidrata o estado salvo e monta o baralho, mas toda visita começa com as categorias ligadas", () => {
     const hiddenCustomCard = makeCard({
       id: "custom-card-hidden",
       mode: "truth",
@@ -119,8 +119,8 @@ describe("useGameSession — hidratação e persistência", () => {
     expect(session.currentMode).toBe("truth");
     expect(session.levelIndex).toBe(2);
     expect(session.level).toBe("hot");
-    expect(session.cats.cute).toBe(false);
-    expect(session.cats.funny).toBe(true);
+    // decisão de 08/10/2026: limites valem só para a visita; nada de filtro salvo
+    expect(Object.values(session.cats).every((value) => value)).toBe(true);
     expect(session.customCards).toEqual([hiddenCustomCard]);
     expect(session.hiddenIds).toEqual([hiddenCustomCard.id]);
     expect(session.scores).toEqual({ Ana: 3 });
@@ -148,7 +148,7 @@ describe("useGameSession — hidratação e persistência", () => {
       scores: Record<string, number>;
     }>(storage, STORAGE_KEY);
     expect(saved.players).toEqual(["Ela", "Ele", "Lia"]);
-    expect(saved.cats.cute).toBe(false);
+    expect(saved).not.toHaveProperty("cats");
     expect(saved.scores).toEqual({ Lia: 3 });
   });
 
@@ -171,7 +171,7 @@ describe("useGameSession — hidratação e persistência", () => {
     expect(session.players).toEqual(["Jo"]);
     expect(session.currentMode).toBe("dare");
     expect(session.levelIndex).toBe(3);
-    expect(session.cats.romantic).toBe(false);
+    expect(session.cats.romantic).toBe(true);
     expect(session.scores).toEqual({ Jo: 4 });
     expect(storage.getItem(STORAGE_KEY)).not.toBeNull();
     expect(readJson<{ currentMode: string }>(storage, STORAGE_KEY).currentMode).toBe("dare");

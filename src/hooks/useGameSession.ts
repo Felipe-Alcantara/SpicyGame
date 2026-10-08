@@ -53,8 +53,8 @@ export function useGameSession() {
       if (Array.isArray(saved.players) && saved.players.length) setPlayers(saved.players);
       if (saved.currentMode) setCurrentMode(saved.currentMode);
       if (typeof saved.levelIndex === "number") setLevelIndex(saved.levelIndex);
-      // mescla com o padrão: categorias novas entram ligadas em vez de sumir
-      if (saved.cats) setCats({ ...allCategoriesOn(), ...saved.cats });
+      // categorias não são restauradas: limite vale só para a visita, e toda
+      // visita começa com tudo ligado (decisão do dono em 08/10/2026)
       if (Array.isArray(saved.customCards)) setCustomCards(saved.customCards);
       if (Array.isArray(saved.hiddenIds)) setHiddenIds(saved.hiddenIds);
       if (saved.scores) setScores(saved.scores);
@@ -64,8 +64,8 @@ export function useGameSession() {
 
   useEffect(() => {
     if (!hydrated) return; // não sobrescreve o salvo antes de terminar de ler
-    saveState({ players, currentMode, levelIndex, cats, customCards, hiddenIds, scores });
-  }, [hydrated, players, currentMode, levelIndex, cats, customCards, hiddenIds, scores]);
+    saveState({ players, currentMode, levelIndex, customCards, hiddenIds, scores });
+  }, [hydrated, players, currentMode, levelIndex, customCards, hiddenIds, scores]);
 
   // ---------- Baralho ----------
   const allCards = useMemo(() => [...ALL_BASE_CARDS, ...customCards], [customCards]);

@@ -11,12 +11,21 @@ import type { PersistedState } from "./storage";
 /** Versão do formato compartilhado pelo export/import, independente da chave local. */
 export const EXPORT_FORMAT_VERSION = 1 as const;
 
-export type ExportedGameState = PersistedState & {
+/**
+ * O que viaja no export/import: o estado salvo mais as categorias. As
+ * categorias não ficam salvas entre visitas, mas quem exporta leva o filtro
+ * que está usando agora, e quem importa recebe esse filtro.
+ */
+export type TransferableState = PersistedState & {
+  cats: Record<Category, boolean>;
+};
+
+export type ExportedGameState = TransferableState & {
   version: typeof EXPORT_FORMAT_VERSION;
 };
 
 export type StateTransferResult =
-  | { ok: true; format: "current" | "legacy"; state: Partial<PersistedState> }
+  | { ok: true; format: "current" | "legacy"; state: Partial<TransferableState> }
   | { ok: false; error: string };
 
 const INVALID_JSON_MESSAGE = "JSON inválido — confira se você colou o texto inteiro.";
@@ -40,7 +49,7 @@ const CURRENT_FIELDS = [
 type JsonObject = Record<string, unknown>;
 
 /** Serializa o estado configurável completo com uma versão explícita. */
-export function serializeGameState(state: PersistedState): string {
+export function serializeGameState(state: TransferableState): string {
   const exported: ExportedGameState = {
     version: EXPORT_FORMAT_VERSION,
     players: state.players,
@@ -86,7 +95,7 @@ export function parseGameState(json: string): StateTransferResult {
     : { ok: false, error: INVALID_STATE_MESSAGE };
 }
 
-function parseLegacyState(value: JsonObject): Partial<PersistedState> | null {
+function parseLegacyState(value: JsonObject): Partial<TransferableState> | null {
   if (!hasFields(value, LEGACY_FIELDS)) return null;
 
   const players = normalizeNames(value.players);
@@ -98,7 +107,7 @@ function parseLegacyState(value: JsonObject): Partial<PersistedState> | null {
   return { players, customCards, hiddenIds, scores };
 }
 
-function parseCurrentState(value: JsonObject): Partial<PersistedState> | null {
+function parseCurrentState(value: JsonObject): Partial<TransferableState> | null {
   if (!hasFields(value, CURRENT_FIELDS)) return null;
 
   const players = normalizeNames(value.players);
