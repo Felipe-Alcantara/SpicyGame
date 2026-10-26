@@ -55,7 +55,7 @@ export function Modal({
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.92, opacity: 0, y: 12 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
-            className="w-full max-w-md rounded-3xl border border-white/10 bg-zinc-950/95 p-6 shadow-2xl"
+            className="spicy-scroll max-h-full w-full max-w-md overflow-y-auto rounded-3xl border border-white/10 bg-zinc-950/95 p-6 shadow-2xl"
           >
             <div className="flex items-start justify-between gap-4">
               <div>
