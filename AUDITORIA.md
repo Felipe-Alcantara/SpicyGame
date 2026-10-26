@@ -174,7 +174,16 @@ Exportar é o único backup que existe, e:
 
 **Encaminhamento:** task nova (Média).
 
-### P2 — Alvos de toque e contraste no celular
+### P2 — Alvos de toque e contraste no celular · **resolvido em 26/10**
+
+> **Atualização de 26/10/2026.** No celular, a tela inicial, o modal do Segredo e
+> a gaveta passaram a ter **0 alvos abaixo de 44 px** (eram 9 de 10 e 172 de 173)
+> e **0 textos abaixo do AA** (eram 4 e 25); nada fica abaixo de 24 px. A regra
+> mora numa variante `toque:` do Tailwind (ponteiro grosso ou abaixo de `lg`) nos
+> componentes compartilhados, e o texto informativo em `/30`, `/40` e `/50` subiu
+> para `/60`. Commits `cebfe7f` (a medição virou `npm run acessibilidade`) e
+> `6c3aa29`. O teste em aparelho físico segue na task de Mobile. O texto abaixo é
+> o diagnóstico original.
 
 Medido no build, no celular (390×844):
 

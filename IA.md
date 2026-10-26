@@ -869,3 +869,89 @@ que este repositório não controla.
 - A trava `hydrated` foi validada pela causa, não pelo StrictMode real (ver acima).
 - O runner do GitHub (Linux, Node 24) roda a suíte e o gate, mas não as
   mutações: `npm run mutacao` só foi executado neste computador (Windows, Node 25).
+
+## [2026-10-26] Alvos de toque de 44 px e contraste AA no celular
+
+### Contexto
+
+A auditoria de 27/09 mediu, no celular (390×844), 9 de 10 alvos da tela inicial
+e 182 de 184 da gaveta abaixo de 44 px, dois abaixo do mínimo AA de 24 px (o
+slider de intensidade e a caixa "Só ativas") e 25 textos abaixo de 4,5:1, o pior
+a 2,34:1. A ferramenta daquela medição não foi guardada (o mesmo que aconteceu
+com as mutações), então a primeira parte do trabalho foi tê-la no repositório.
+
+### Decisões
+
+- **Medir antes de mexer.** `npm run acessibilidade` (`cebfe7f`) abre `docs/`
+  num Chrome headless e mede alvos e contraste. Sobre o build de `d4e6153` ela
+  reproduz os números da auditoria (2,34:1 no rodapé e na dica, 2,43–2,44:1 nos
+  rótulos do slider, 3,3:1 em `/40`, 4,45:1 em `/50`, 9 de 10 alvos), então o
+  método reconstruído é fiel.
+- **A variante `toque:` do Tailwind** (`tailwind.config.js`) vale para
+  `pointer: coarse` **ou** abaixo de `lg`. O segundo caso é onde a gaveta
+  substitui o painel lateral, então cobre o celular mesmo se o navegador não
+  declarar ponteiro grosso. Com mouse e tela larga a interface continua compacta.
+- **44 px só em toque; 24 px em qualquer tela.** `Button` sm/md/icon, campos,
+  abas de modo, botão Segredo, linhas de switch, chips de categoria e "Só ativas"
+  ganham `toque:min-h-11`; o slider e a caixa "Só ativas" passam de 16 para 24 px
+  também no desktop. A regra mora nos componentes compartilhados, não em cada tela.
+- **Contraste: `text-rose-100/30|40|50` viram `/60`.** Nos fundos sólidos do app,
+  `/50` dava 4,45:1 (reprova por 0,05), `/55` já passaria (5,09:1) e `/60` dá no
+  mínimo 5,79:1. Escolhi `/60` pela folga sobre os brilhos do fundo, que a medição
+  não vê. Perde-se um degrau de hierarquia entre texto de apoio e dica; a
+  hierarquia segue por tamanho e peso. Rótulos do slider: 10 → 11 px.
+- **Dica de teclado só para ponteiro fino:** com `pointer: coarse` a carta mostra
+  "Arraste a carta para o lado."; com mouse, a dica com as setas.
+- **Chips de categoria também a 44 px** nos dois formulários (nova carta e edição),
+  para a gaveta não ter uma exceção solta; custa linhas a mais num formulário
+  pouco usado.
+
+### O que mudou
+
+- `cebfe7f` — `scripts/acessibilidade.mjs` (matemática de cor e medição do DOM, sem
+  dependência, 12 testes contra valores de referência do WCAG),
+  `scripts/medir-acessibilidade.mjs` (servidor local + Chrome headless),
+  `npm run acessibilidade` e a seção do README.
+- `6c3aa29` — variante `toque:`, `Button`, `Field`, `ModeTabs`, `AppHeader`,
+  `FiltersPanel`, `CardsManager`, `AddCardPanel`, `CardStage` e as opacidades de
+  texto em 11 arquivos; `docs/` regerado no mesmo commit.
+
+### Validação
+
+`npm run acessibilidade`, mesmo build de partida, celular 390×844 com
+`pointer: coarse` (confirmado: `matchMedia` devolveu `true`):
+
+| Tela | Alvos abaixo de 44 px (antes → depois) | Abaixo de 24 px | Textos abaixo do AA |
+| --- | --- | --- | --- |
+| inicial | 9 de 10 → **0 de 10** | 0 → 0 | 4 de 19 → **0** |
+| Segredo | 5 de 5 → **0 de 5** | 0 → 0 | 0 → 0 |
+| gaveta | 172 de 173 → **0 de 173** | 2 → **0** | 25 de 422 → **0** |
+| desktop (mouse) | 179 de 181 → 179 (compacto de propósito) | 2 → **0** | 30 de 440 → **0** |
+
+`npm run lint`, `typecheck`, `npm test` (97) e `npm run build` limpos; as 15
+mutações seguem mortas. Quality e Pages passaram e o site no ar serve
+`index-BMEEwvP7.js` e `index-nA20BF4P.css`, idênticos ao build local. A dica foi
+conferida nos dois tipos de ponteiro (toque vê só a frase de arraste; mouse vê a
+das setas). Capturas do celular em quatro estados (tela inicial, topo da gaveta,
+formulário de carta nova e Biblioteca) mostram o layout íntegro; a Biblioteca
+fica com linhas mais altas, porque os botões descem para uma linha própria quando
+os rótulos ocupam a largura. As linhas de switch das categorias foram medidas
+(44 px), não vistas: a captura desse trecho falhou por um defeito do meu script de
+captura.
+
+### Limitações
+
+- **A medição é uma aproximação**: usa cores de fundo dos ancestrais (gradiente:
+  pior caso entre as paradas) e não vê desfoque, sombra nem os halos do fundo.
+  Texto sobre um irmão posicionado — o rótulo da aba ativa sobre o gradiente — é
+  medido contra o ancestral; à mão, branco sobre as paradas dá 4,70:1 (rose-600)
+  e 4,83:1 (red-600), então passa.
+- **Fora da medição:** contraste de elementos que não são texto (bordas, anel de
+  foco; o padrão pede 3:1), o modal de importar/resetar e os avisos temporários.
+  Só o modal do Segredo, a tela inicial e a gaveta foram medidos.
+- **Não testado em aparelho físico** (a task de Mobile continua aberta). O
+  `pointer: coarse` foi emulado por flag do Chrome; o `toque:` por largura vale
+  em qualquer navegador estreito.
+- A contagem de textos varia em ±1 entre execuções (440 e 439 no desktop), por
+  animação em andamento.
+- O desktop com mouse segue com alvos de 24 a 42 px, todos acima do mínimo AA.
