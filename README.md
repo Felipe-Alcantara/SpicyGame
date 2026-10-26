@@ -14,6 +14,11 @@ aparelho.
   assunto, mesmo que ela tenha outra categoria ligada. As outras categorias são
   **assuntos**: a carta entra se tiver pelo menos um ligado. Os filtros valem
   para a visita — ao abrir o jogo de novo, tudo volta ligado.
+- **Baralho por modo**: cada modo tem o próprio baralho embaralhado e a carta
+  não se repete até ele acabar — inclusive alternando Verdade e Desafio. Sair de
+  um modo dá a carta da tela como vista; ao voltar, o baralho segue da próxima.
+  Mudar filtros ou cartas não reembaralha: as já vistas ficam e as novas entram
+  entre as que faltam.
 - **Placar de goles** por jogador.
 - **Cartas suas**: criar, editar, duplicar as do baralho base e ocultar as que
   não têm a ver com vocês.
@@ -24,7 +29,7 @@ aparelho.
 
 Jogadores, modo, nível, cartas próprias, cartas ocultas e placar ficam salvos no
 `localStorage` do próprio navegador. As categorias não: os limites valem só para
-a visita.
+a visita. O baralho de cada modo também não: recarregar a página reembaralha.
 
 ### Formato de exportação e importação
 

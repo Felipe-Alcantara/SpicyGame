@@ -9,7 +9,7 @@
 
 ## 📊 ESTADO ATUAL (RESUMO VIVO)
 
-Última atualização: [2026-09-27]
+Última atualização: [2026-10-26]
 
 - **Fase**: v0.2.1 — auditoria geral concluída em duas passadas (14/09 e 27/09);
   parecer completo em [`AUDITORIA.md`](AUDITORIA.md). Site no ar igual ao `main`.
@@ -17,10 +17,9 @@
   nativo fora; continuar público com aviso 18+ na primeira visita; seguir 100%
   local, sem conta nem servidor.
 - **Em andamento**: nada neste repositório.
-- **Próximo passo sugerido**: fazer o desligar de categoria excluir o assunto e
-  guardar o baralho por modo (os dois P1 da auditoria), depois o aviso 18+.
-- **Risco aberto**: desligar uma categoria não tira as cartas dela; alternar
-  modos repete carta; estado salvo malformado deixa a tela branca; revisão
+- **Próximo passo sugerido**: o aviso 18+ (os dois P1 da auditoria — limites no
+  filtro e baralho por modo — já foram resolvidos).
+- **Risco aberto**: estado salvo malformado deixa a tela branca; revisão
   editorial das cartas pendente com o casal. Todos com task aberta.
 
 ---
@@ -699,3 +698,78 @@ Limites/Assuntos, "Carinho"/"Sensual", nenhuma ocorrência de "fallback",
 recarregar volta Sexo ligado e mantém o nível, sem erro de console. **Não
 testado em aparelho físico.**
 
+
+## [2026-10-26] Baralho por modo: alternar Verdade e Desafio não repete carta
+
+### Contexto
+
+A auditoria de 27/09 mediu que o sorteio sem reposição só valia dentro de um
+modo: trocar de modo mudava o `pool`, e o efeito do hook reembaralhava e voltava
+o cursor para zero. Em 500 partidas de 10 rodadas alternadas com o pool de
+Verdade em 44, 349 (69,8%) repetiram carta; 10 cartas seguidas no mesmo modo,
+nenhuma. Na virada do baralho, a última carta podia voltar logo em seguida
+(41 de 300 viradas num pool de 8). Editar o texto de uma carta própria que já
+estava no baralho deixava a versão antiga na tela até o próximo embaralhar.
+
+### Decisões
+
+- **Voltar a um modo avança o baralho dele.** Se voltar mostrasse a carta que
+  já estava na tela, o uso alternado (Verdade → Desafio → Verdade) repetiria
+  *sempre* — pior que antes. Então sair de um modo dá a carta da tela como vista
+  (`setCurrentMode` virou `switchMode` dentro do hook; importar e hidratar
+  continuam usando o setter cru, sem gastar carta). Custo aceito: clicar numa
+  aba só para olhar também gasta a carta daquele modo. Clicar no modo que já está
+  aberto não gasta.
+- **Mudar o pool ajusta, não recomeça.** As cartas vistas e a da tela ficam, a
+  ordem das não vistas fica, as que saíram do pool caem e as novas entram em
+  posições sorteadas entre as não vistas (entrar só no fim faria o nível
+  subir e as cartas novas só aparecerem depois de todas as velhas). Se a carta
+  da tela sai do pool, a próxima não vista toma o lugar; se não há próxima,
+  abre-se um ciclo novo.
+- **Virada nunca abre com a última carta vista** (pool ≥ 2): se o embaralhamento
+  sorteia a mesma na frente, ela troca de lugar com a última do baralho.
+- **Nada disso é salvo no `localStorage`**: recarregar a página reembaralha
+  (como pedia a task).
+
+### O que mudou
+
+- `61c82ae` — `src/hooks/useGameSession.ts`: o estado `deck`/`cursor`/`poolKey`
+  virou `decks` por modo (`ModeDeck`), com `newCycle`, `advance` e `syncDeck`
+  como funções puras no topo do arquivo. A API do hook não mudou (`deck`,
+  `cursor`, `currentCard`, `nextCard`, `previousCard`, `reshuffle`,
+  `setCurrentMode`). `src/components/game/CardStage.tsx`: `card?.text` entrou
+  nas dependências do memo do texto — sem isso o baralho atualizado não bastava
+  para a edição aparecer; o memo continua por `card.id` + posição, então os
+  nomes sorteados não trocam a cada render (conferido no navegador).
+  `docs/` regenerado no mesmo commit.
+
+### Validação
+
+Oito testes novos em `useGameSession.test.tsx`; seis falharam antes e passam
+depois (alternância com `Math.random` fixo — `expected 1 to be 10`; voltar ao
+modo; virada, com `n15` repetida; ajuste do pool; carta da tela oculta; texto
+editado) e dois guardam bordas que já passavam (clicar no modo aberto; ocultar a
+última carta). Mutações das regras novas, todas acusadas: virada sem a troca,
+sair do modo sem avançar, ajuste do pool recomeçando do zero. `npm run lint`,
+`npm run typecheck`, `npm test` (71) e `npm run build` limpos.
+
+Chromium via Claude in Chrome sobre o build, com cliques nos botões: 10 rodadas
+Verdade/Desafio deram 10 cartas distintas em cada modo (posições 1…10 de 44),
+voltar ao modo mostra `2/44` e `2/45`, editar o texto de uma carta própria **na
+tela** muda a carta sem mexer na posição (23/45), nome sorteado estável com
+quatro re-renders, nenhum erro de console. Uma primeira medição foi descartada:
+`AnimatePresence mode="wait"` mantém a carta antiga no DOM durante a saída, e a
+leitura sem esperar a animação contou uma carta de Desafio como de Verdade.
+
+### Limitações
+
+- Carta já vista que sai do pool (categoria desligada, carta ocultada) e volta
+  entra como nova e pode reaparecer no mesmo ciclo.
+- "Embaralhar" continua sem evitar a carta que estava na tela (só a virada evita).
+- **Não testado em aparelho físico**; o CardStage não tem teste automatizado
+  (a suíte roda em Node, sem DOM) — a edição de texto foi validada só no navegador.
+- No Windows com `core.autocrlf=true`, o checkout deixa CRLF no shebang de
+  `scripts/aplicar-revisao-cartas.mjs` (o teste dele não carrega) e no
+  `index.html` (o build gera `\r\r\n` em `docs/index.html`). O CI roda em Linux
+  e não é afetado; localmente, converti esses dois arquivos para LF antes do
+  gate, sem commitar. Fica task para blindar com `.gitattributes`.

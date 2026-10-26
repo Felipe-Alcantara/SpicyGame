@@ -105,7 +105,15 @@ jargão "O filtro não usa fallback.".
 Kink, BDSM e Sexting como limites — desligado, sai toda carta que tiver o
 assunto — e explicar a regra no painel.
 
-### P1 — Alternar modos desfaz o sorteio sem repetição
+### P1 — Alternar modos desfaz o sorteio sem repetição · **resolvido em 26/10**
+
+> **Atualização de 26/10/2026.** Cada modo passa a guardar o próprio baralho e
+> cursor (commit `61c82ae`): voltar a um modo segue o baralho dele, já na carta
+> seguinte à que foi vista; mudar nível, categoria ou cartas ajusta o baralho em
+> vez de recomeçar; a virada nunca abre com a última carta vista; e editar o
+> texto de uma carta própria atualiza a carta na tela. Medido no navegador:
+> 10 rodadas de Verdade e Desafio deram 10 cartas distintas em cada modo (antes,
+> 69,8% das partidas repetiam). O texto abaixo é o diagnóstico original.
 
 Trocar de modo muda o pool, e o efeito do hook reembaralha e volta o cursor
 para zero. Quem joga "Verdade ou Desafio" alternando a cada rodada recebe, a
