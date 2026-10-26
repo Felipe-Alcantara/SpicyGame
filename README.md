@@ -93,7 +93,19 @@ npm run lint       # checa regras mínimas de JavaScript/TypeScript
 npm run preview    # serve o build local
 npm run typecheck  # só a checagem de tipos
 npm test           # suíte completa de testes (vitest)
+npm run mutacao    # quebra 15 regras de propósito e confere que a suíte acusa (~20 s)
 ```
+
+### Teste de mutação
+
+`npm test` verde só diz que os testes passam, não que eles protegem alguma
+coisa. `npm run mutacao` quebra uma regra crítica por vez (nível, filtro,
+persistência, placar, curingas, baralho base…), roda a suíte inteira e exige que
+algum teste falhe; mutação que passa em tudo é regra sem proteção. Ele restaura
+o arquivo depois de cada rodada e termina com erro se alguma sobreviver. A lista
+fica em `scripts/mutacoes.mjs`, com um trecho de uma linha por regra: se o código
+mudar e o trecho sumir, o `npm test` acusa (`scripts/mutacoes.test.mjs`) e a
+mutação precisa ser atualizada.
 
 ### Publicar
 
