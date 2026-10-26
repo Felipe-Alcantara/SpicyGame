@@ -1,10 +1,12 @@
 import { useState } from "react";
-import { Download, Trash2, Upload } from "lucide-react";
+import { Copy, Download, Trash2, Upload } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { Textarea } from "../ui/Field";
 import { Modal } from "../ui/Modal";
 import { useToast } from "../ui/Toast";
+import { downloadJson } from "../../lib/download";
+import { exportFileName } from "../../lib/stateTransfer";
 
 /** Exportar, importar e resetar o estado salvo neste navegador. */
 export function DataPanel({
@@ -20,15 +22,24 @@ export function DataPanel({
   const [importOpen, setImportOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [json, setJson] = useState("");
+  const [manualJson, setManualJson] = useState<string | null>(null);
 
   async function copy() {
     const data = onExport();
     try {
       await navigator.clipboard.writeText(data);
-    notify("Estado completo copiado para a área de transferência.", "success");
+      notify("Estado completo copiado para a área de transferência.", "success");
     } catch {
-      notify("O navegador bloqueou a cópia. Selecione e copie manualmente.", "error");
+      // sem permissão ou sem área de transferência na página: o texto vai para a tela
+      setManualJson(data);
+      notify("O navegador bloqueou a cópia. O texto está na tela para você copiar.", "error");
     }
+  }
+
+  function download() {
+    const name = exportFileName();
+    downloadJson(name, onExport());
+    notify(`Backup baixado: ${name}.`, "success");
   }
 
   function confirmImport() {
@@ -48,12 +59,15 @@ export function DataPanel({
         <CardHeader>
           <CardTitle>Seus dados</CardTitle>
           <CardDescription>
-            O estado completo pode ser exportado em JSON e fica salvo só neste navegador.
+            O estado completo pode ser copiado ou baixado em JSON e fica salvo só neste navegador.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-wrap gap-2">
           <Button variant="secondary" size="sm" onClick={copy}>
-            <Download size={14} /> Exportar
+            <Copy size={14} /> Copiar
+          </Button>
+          <Button variant="secondary" size="sm" onClick={download}>
+            <Download size={14} /> Baixar
           </Button>
           <Button variant="secondary" size="sm" onClick={() => setImportOpen(true)}>
             <Upload size={14} /> Importar
@@ -85,6 +99,30 @@ export function DataPanel({
           onChange={(e) => setJson(e.target.value)}
           placeholder='{ "version": 1, "players": [...], "currentMode": "truth", ... }'
           aria-label="JSON do estado da partida"
+        />
+      </Modal>
+
+      <Modal
+        open={manualJson !== null}
+        onClose={() => setManualJson(null)}
+        title="Copie o JSON"
+        description="O navegador bloqueou a cópia automática. Toque no campo, selecione tudo e copie — ou baixe o arquivo."
+        footer={
+          <>
+            <Button variant="secondary" onClick={download}>
+              <Download size={14} /> Baixar
+            </Button>
+            <Button onClick={() => setManualJson(null)}>Fechar</Button>
+          </>
+        }
+      >
+        <Textarea
+          readOnly
+          autoFocus
+          value={manualJson ?? ""}
+          onFocus={(e) => e.currentTarget.select()}
+          aria-label="JSON exportado"
+          className="h-48 resize-none font-mono text-xs"
         />
       </Modal>
 

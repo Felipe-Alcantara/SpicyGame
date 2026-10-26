@@ -4,6 +4,7 @@ import { CATEGORIES, type CardItem, type Category } from "../data/taxonomy";
 import {
   EXPORT_FORMAT_VERSION,
   describeMergeResult,
+  exportFileName,
   mergeCustomCards,
   parseGameState,
   serializeGameState,
@@ -206,5 +207,12 @@ describe("describeMergeResult", () => {
     expect(describeMergeResult({ added: 0, skipped: 0 })).toBe(
       "O arquivo não tem cartas próprias para somar.",
     );
+  });
+});
+
+describe("exportFileName", () => {
+  it("usa a data local com mês e dia de dois dígitos", () => {
+    expect(exportFileName(new Date(2026, 9, 26, 23, 59))).toBe("spicy-game-2026-10-26.json");
+    expect(exportFileName(new Date(2026, 0, 5, 0, 1))).toBe("spicy-game-2026-01-05.json");
   });
 });

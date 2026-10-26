@@ -69,6 +69,12 @@ export function serializeGameState(state: TransferableState): string {
   return JSON.stringify(exported, null, 2);
 }
 
+/** Nome do arquivo de backup: a data local de hoje, para vários backups não se sobrescreverem. */
+export function exportFileName(date: Date = new Date()): string {
+  const two = (n: number) => String(n).padStart(2, "0");
+  return `spicy-game-${date.getFullYear()}-${two(date.getMonth() + 1)}-${two(date.getDate())}.json`;
+}
+
 /** A mesma frase no mesmo modo é a mesma carta, com ou sem caixa e espaços a mais. */
 const cardKey = (card: CardItem) =>
   `${card.mode}|${card.text.trim().replace(/\s+/g, " ").toLowerCase()}`;
