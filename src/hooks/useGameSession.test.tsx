@@ -130,6 +130,33 @@ describe("useGameSession — hidratação e persistência", () => {
     expect(session.deck.every((card) => levelRank(card.level) <= 2)).toBe(true);
   });
 
+  it("nunca grava o estado padrão por cima do salvo antes de terminar de ler", () => {
+    // O app roda em StrictMode, que monta os efeitos duas vezes: sem a trava `hydrated`,
+    // o primeiro salvar devolve o padrão antes da segunda leitura e a visita recomeça do zero.
+    // O react-test-renderer não monta efeitos em dobro (medido: 1 em 5 configurações),
+    // então o teste confere a causa: nenhuma gravação pode ser do estado padrão.
+    storage.setItem(
+      STORAGE_KEY,
+      JSON.stringify({
+        players: ["Ana", "Bia"],
+        currentMode: "truth",
+        levelIndex: 2,
+        customCards: [],
+        hiddenIds: [],
+        scores: { Ana: 3 },
+      }),
+    );
+    const gravacoes = vi.spyOn(storage, "setItem");
+
+    startSession();
+
+    const jogadoresGravados = gravacoes.mock.calls
+      .filter(([chave]) => chave === STORAGE_KEY)
+      .map(([, valor]) => (JSON.parse(valor) as { players: string[] }).players);
+    expect(jogadoresGravados.length).toBeGreaterThan(0);
+    expect(jogadoresGravados.filter((jogadores) => jogadores.join() !== "Ana,Bia")).toEqual([]);
+  });
+
   it("salva alterações somente depois da hidratação", () => {
     const session = startSession();
 
@@ -289,6 +316,25 @@ describe("useGameSession — baralho e filtros", () => {
           expect(vazadas, `${limite} desligado em ${mode}/${LEVELS[levelIndex]}`).toEqual([]);
           expect(poolSize).toBe(deck.length);
         }
+      }
+    }
+  });
+
+  it("inclui no baralho as cartas do nível escolhido, em todo modo e nível", () => {
+    const session = startSession();
+    for (const mode of MODES) {
+      for (const [levelIndex, level] of LEVELS.entries()) {
+        session.update(() => {
+          session.get().setCurrentMode(mode);
+          session.get().setLevelIndex(levelIndex);
+        });
+        const { deck } = session.get();
+        // o limite é inclusivo: "até Hot" traz Hot. Só a trava de cima não pega o `<` no lugar do `<=`
+        expect(
+          deck.some((card) => card.level === level),
+          `${mode} até ${level}`,
+        ).toBe(true);
+        expect(deck.every((card) => levelRank(card.level) <= levelIndex)).toBe(true);
       }
     }
   });
