@@ -7,8 +7,8 @@ import {
 import { cn } from "../../lib/cn";
 
 const FIELD_BASE =
-  "w-full rounded-2xl bg-black/30 border border-white/10 px-3 py-2 text-sm text-rose-50 " +
-  "placeholder:text-rose-100/30 outline-none transition " +
+  "w-full rounded-2xl bg-black/30 border border-white/10 px-3 py-2 text-sm text-rose-50 toque:min-h-11 " +
+  "placeholder:text-rose-100/60 outline-none transition " +
   "focus:border-rose-400/50 focus:ring-2 focus:ring-rose-500/30";
 
 export const Input = forwardRef<HTMLInputElement, InputHTMLAttributes<HTMLInputElement>>(
@@ -92,7 +92,7 @@ export function Slider({
       max={max}
       step={step}
       onChange={(e) => onChange(Number(e.target.value))}
-      className="w-full accent-rose-500 cursor-pointer"
+      className="h-6 w-full accent-rose-500 cursor-pointer toque:h-11"
     />
   );
 }

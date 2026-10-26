@@ -92,11 +92,11 @@ export function AddCardPanel({
               aria-pressed={selected.includes(c)}
               onClick={() => toggle(c)}
               className={cn(
-                "rounded-full border px-3 py-1 text-xs transition",
+                "rounded-full border px-3 py-1 text-xs transition toque:min-h-11",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/70",
                 selected.includes(c)
                   ? "border-rose-400/50 bg-rose-500/20 text-rose-100"
-                  : "border-white/10 bg-white/5 text-rose-100/50 hover:text-rose-100/80"
+                  : "border-white/10 bg-white/5 text-rose-100/60 hover:text-rose-100/80"
               )}
             >
               {CATEGORY_LABELS[c]}

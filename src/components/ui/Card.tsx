@@ -47,5 +47,5 @@ export function CardTitle({
 }
 
 export function CardDescription({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn("mt-1 text-sm text-rose-100/50", className)} {...props} />;
+  return <p className={cn("mt-1 text-sm text-rose-100/60", className)} {...props} />;
 }

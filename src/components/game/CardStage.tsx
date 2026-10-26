@@ -96,7 +96,7 @@ export function CardStage({
               <Flame size={11} /> {LEVEL_LABELS[card?.level ?? "spicy"]}
             </Badge>
             <Badge>{MODE_LABELS[mode]}</Badge>
-            <span className="ml-auto text-xs tabular-nums text-rose-100/40">
+            <span className="ml-auto text-xs tabular-nums text-rose-100/60">
               {total ? `${position + 1} / ${total}` : "0 / 0"}
             </span>
           </header>
@@ -104,7 +104,7 @@ export function CardStage({
           <p
             className={cn(
               "my-6 text-balance text-2xl font-semibold leading-snug sm:text-3xl",
-              !card && "text-lg font-normal text-rose-100/50"
+              !card && "text-lg font-normal text-rose-100/60"
             )}
           >
             {card
@@ -113,7 +113,7 @@ export function CardStage({
           </p>
 
           <footer className="space-y-3">
-            <p className="text-xs text-rose-100/40">{MODE_DESCRIPTIONS[mode]}</p>
+            <p className="text-xs text-rose-100/60">{MODE_DESCRIPTIONS[mode]}</p>
             <div className="flex flex-wrap items-center gap-1.5">
               {card?.cats.map((c) => (
                 <Badge key={c}>{CATEGORY_LABELS[c]}</Badge>
@@ -138,8 +138,11 @@ export function CardStage({
           Próxima carta
         </Button>
       </div>
-      <p className="mt-2 text-center text-[11px] text-rose-100/30">
-        Arraste a carta ou use as setas ← → do teclado.
+      <p className="mt-2 text-center text-[11px] text-rose-100/60">
+        <span className="[@media(pointer:coarse)]:hidden">
+          Arraste a carta ou use as setas ← → do teclado.
+        </span>
+        <span className="hidden [@media(pointer:coarse)]:inline">Arraste a carta para o lado.</span>
       </p>
     </section>
   );

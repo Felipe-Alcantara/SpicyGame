@@ -93,10 +93,10 @@ export function CardsManager({
               </option>
             ))}
           </Select>
-          <label className="flex items-center gap-2 text-xs text-rose-100/60">
+          <label className="flex min-h-6 items-center gap-2 text-xs text-rose-100/60 toque:min-h-11">
             <input
               type="checkbox"
-              className="h-4 w-4 accent-rose-500"
+              className="h-5 w-5 accent-rose-500"
               checked={onlyActive}
               onChange={(e) => setOnlyActive(e.target.checked)}
             />
@@ -106,7 +106,7 @@ export function CardsManager({
 
         <div className="spicy-scroll max-h-[420px] space-y-2 overflow-auto pr-1">
           {rows.length === 0 && (
-            <p className="text-sm text-rose-100/40">Nenhuma carta com esse filtro.</p>
+            <p className="text-sm text-rose-100/60">Nenhuma carta com esse filtro.</p>
           )}
           {rows.slice(0, limit).map((card) => {
             const isCustom = customIds.has(card.id);
@@ -254,10 +254,10 @@ function CardEditor({
               setCats((s) => (s.includes(c) ? s.filter((x) => x !== c) : [...s, c]))
             }
             className={cn(
-              "rounded-full border px-2.5 py-1 text-[11px] transition",
+              "rounded-full border px-2.5 py-1 text-[11px] transition toque:min-h-11",
               cats.includes(c)
                 ? "border-rose-400/50 bg-rose-500/20 text-rose-100"
-                : "border-white/10 bg-white/5 text-rose-100/50"
+                : "border-white/10 bg-white/5 text-rose-100/60"
             )}
           >
             {CATEGORY_LABELS[c]}

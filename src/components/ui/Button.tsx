@@ -19,10 +19,10 @@ const VARIANTS: Record<Variant, string> = {
 };
 
 const SIZES: Record<Size, string> = {
-  sm: "px-3 py-1.5 text-xs gap-1.5",
-  md: "px-4 py-2 text-sm gap-2",
+  sm: "px-3 py-1.5 text-xs gap-1.5 toque:min-h-11",
+  md: "px-4 py-2 text-sm gap-2 toque:min-h-11",
   lg: "px-6 py-3 text-base gap-2",
-  icon: "p-2 aspect-square",
+  icon: "p-2 aspect-square toque:min-h-11 toque:min-w-11",
 };
 
 /** Botão base do app: variantes de intenção + tamanhos, sem dependência externa. */

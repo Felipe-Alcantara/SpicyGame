@@ -156,7 +156,7 @@ export function SpicyGame() {
 
       <SecretModal open={secretOpen} onClose={() => setSecretOpen(false)} />
 
-      <footer className="border-t border-white/5 py-8 text-center text-xs text-rose-100/30">
+      <footer className="border-t border-white/5 py-8 text-center text-xs text-rose-100/60">
         Feito com <span className="text-rose-500">❤</span> para a noite de vocês — sem anúncios,
         sem servidor, sem julgamento.
       </footer>

@@ -15,13 +15,13 @@ export function AppHeader({
         <button
           onClick={onSecretClick}
           aria-label="Segredo"
-          className="rounded-full p-1 text-rose-400 transition hover:scale-110 hover:text-rose-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/70"
+          className="inline-flex items-center justify-center rounded-full p-1 text-rose-400 transition hover:scale-110 hover:text-rose-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/70 toque:min-h-11 toque:min-w-11"
         >
           <Flame size={22} />
         </button>
         <div>
           <span className="text-base font-semibold tracking-tight">Spicy Game</span>
-          <span className="ml-2 hidden text-xs text-rose-100/40 sm:inline">
+          <span className="ml-2 hidden text-xs text-rose-100/60 sm:inline">
             jogo de bebida pra dois
           </span>
         </div>

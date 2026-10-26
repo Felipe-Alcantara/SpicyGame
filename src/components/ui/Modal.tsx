@@ -60,7 +60,7 @@ export function Modal({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold">{title}</h2>
-                {description && <p className="mt-1 text-sm text-rose-100/50">{description}</p>}
+                {description && <p className="mt-1 text-sm text-rose-100/60">{description}</p>}
               </div>
               <Button variant="ghost" size="icon" onClick={onClose} aria-label="Fechar">
                 <X size={16} />

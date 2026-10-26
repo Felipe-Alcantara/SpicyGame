@@ -33,9 +33,9 @@ export function ModeTabs({
             aria-selected={active}
             onClick={() => onChange(mode)}
             className={cn(
-              "relative flex items-center justify-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-medium transition",
+              "relative flex items-center justify-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-medium transition toque:min-h-11",
               "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rose-400/70",
-              active ? "text-white" : "text-rose-100/50 hover:text-rose-100/80"
+              active ? "text-white" : "text-rose-100/60 hover:text-rose-100/80"
             )}
           >
             {active && (

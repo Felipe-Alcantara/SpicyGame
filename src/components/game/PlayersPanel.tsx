@@ -42,7 +42,7 @@ export function PlayersPanel({
       </CardHeader>
       <CardContent className="space-y-3">
         {players.length === 0 && (
-          <p className="text-sm text-rose-100/40">Adicione pelo menos um nome.</p>
+          <p className="text-sm text-rose-100/60">Adicione pelo menos um nome.</p>
         )}
         {players.map((p) => (
           <div

@@ -85,12 +85,12 @@ export function FiltersPanel({
             step={1}
             onChange={onLevelChange}
           />
-          <div className="mt-1 flex justify-between text-[10px] uppercase tracking-wider text-rose-100/30">
+          <div className="mt-1 flex justify-between text-[11px] uppercase tracking-wider text-rose-100/60">
             {LEVELS.map((l) => (
               <span key={l}>{LEVEL_LABELS[l]}</span>
             ))}
           </div>
-          <p className="mt-2 text-xs text-rose-100/40">
+          <p className="mt-2 text-xs text-rose-100/60">
             Entram no baralho todas as cartas até esse nível.
           </p>
         </div>
@@ -109,7 +109,7 @@ export function FiltersPanel({
           cats={cats}
           onToggleCategory={onToggleCategory}
         />
-        <p className="text-xs text-rose-100/40">
+        <p className="text-xs text-rose-100/60">
           Os filtros valem para esta visita: ao abrir o jogo de novo, tudo volta ligado.
         </p>
       </CardContent>
@@ -142,12 +142,12 @@ function CategoryGroup({
   return (
     <div>
       <div className="text-sm">{title}</div>
-      <p className="mb-2 mt-0.5 text-xs text-rose-100/40">{hint}</p>
+      <p className="mb-2 mt-0.5 text-xs text-rose-100/60">{hint}</p>
       <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
         {categories.map((c) => (
           <label
             key={c}
-            className="flex cursor-pointer items-center justify-between gap-2 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm"
+            className="flex cursor-pointer items-center justify-between gap-2 rounded-2xl border border-white/10 bg-black/20 px-3 py-2 text-sm toque:min-h-11"
           >
             <span>{CATEGORY_LABELS[c]}</span>
             <Switch
