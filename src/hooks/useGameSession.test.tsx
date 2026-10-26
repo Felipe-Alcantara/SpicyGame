@@ -690,6 +690,94 @@ describe("useGameSession — jogadores, cartas e exportação", () => {
     expect(session.get().cats.cute).toBe(false);
   });
 
+  it("soma as cartas próprias de um arquivo sem tocar em jogadores, placar, filtros nem nas cartas atuais", () => {
+    const session = startSession();
+    session.update(() => {
+      const current = session.get();
+      current.addPlayer("Carol");
+      current.addPoint("Carol", 3);
+      current.setLevelIndex(3);
+      current.toggleCategory("cute", false);
+      current.toggleHidden(current.allCards[0]!.id);
+      current.addCustomCard({ mode: "truth", text: "Minha carta", level: "cute", cats: ["cute"] });
+    });
+    const before = session.get();
+    const mine = before.customCards[0]!;
+
+    let result: ReturnType<GameSession["importCards"]> | undefined;
+    session.update(() => {
+      result = session.get().importCards(
+        JSON.stringify({
+          version: EXPORT_FORMAT_VERSION,
+          players: ["Outra pessoa"],
+          currentMode: "dare",
+          levelIndex: 0,
+          cats: before.cats,
+          customCards: [
+            makeCard({ id: "custom-dela", mode: "never", text: "Carta dela" }),
+            makeCard({ id: "custom-igual", mode: "truth", text: "  minha CARTA " }),
+          ],
+          hiddenIds: ["n1", "n2"],
+          scores: { "Outra pessoa": 9 },
+        }),
+      );
+    });
+
+    expect(result).toEqual({ ok: true, added: 1, skipped: 1 });
+    const after = session.get();
+    expect(after.customCards).toEqual([mine, makeCard({ id: "custom-dela", mode: "never", text: "Carta dela" })]);
+    expect(after.players).toEqual(before.players);
+    expect(after.scores).toEqual(before.scores);
+    expect(after.hiddenIds).toEqual(before.hiddenIds);
+    expect(after.levelIndex).toBe(3);
+    expect(after.currentMode).toBe(before.currentMode);
+    expect(after.cats).toEqual(before.cats);
+    expect(readJson<{ customCards: CardItem[] }>(storage, STORAGE_KEY).customCards).toHaveLength(2);
+  });
+
+  it("soma também as cartas de um arquivo no formato antigo e dá id novo ao id repetido", () => {
+    const session = startSession();
+    session.update(() => session.get().addCustomCard({ mode: "never", text: "Minha", level: "cute", cats: ["cute"] }));
+    const mine = session.get().customCards[0]!;
+
+    let result: ReturnType<GameSession["importCards"]> | undefined;
+    session.update(() => {
+      result = session.get().importCards(
+        JSON.stringify({
+          players: ["Legado"],
+          customCards: [makeCard({ id: mine.id, mode: "dare", text: "Outra com o mesmo id" })],
+          hiddenIds: [],
+          scores: {},
+        }),
+      );
+    });
+
+    expect(result).toEqual({ ok: true, added: 1, skipped: 0 });
+    const cards = session.get().customCards;
+    expect(cards).toHaveLength(2);
+    expect(cards[0]).toEqual(mine);
+    expect(cards[1]?.text).toBe("Outra com o mesmo id");
+    expect(cards[1]?.id).not.toBe(mine.id);
+  });
+
+  it("rejeita o arquivo inválido ao somar cartas sem alterar nada", () => {
+    const session = startSession();
+    session.update(() => session.get().addCustomCard({ mode: "never", text: "Minha", level: "cute", cats: ["cute"] }));
+    const before = session.get().exportState();
+
+    let result: ReturnType<GameSession["importCards"]> | undefined;
+    session.update(() => {
+      result = session.get().importCards("{ JSON inválido");
+    });
+
+    expect(result).toMatchObject({ ok: false, error: expect.stringContaining("JSON inválido") });
+    session.update(() => {
+      result = session.get().importCards(JSON.stringify({ version: EXPORT_FORMAT_VERSION + 1 }));
+    });
+    expect(result).toMatchObject({ ok: false, error: expect.stringContaining("Versão de estado não suportada") });
+    expect(session.get().exportState()).toBe(before);
+  });
+
   it("rejeita versão ou shape incompatível sem alterar o estado atual", () => {
     const session = startSession();
     session.update(() => {

@@ -21,7 +21,12 @@ import {
 import { ALL_BASE_CARDS } from "../data/cards";
 import { shuffle, uid } from "../lib/random";
 import { clearState, loadState, saveState } from "../lib/storage";
-import { parseGameState, serializeGameState } from "../lib/stateTransfer";
+import {
+  mergeCustomCards,
+  parseGameState,
+  serializeGameState,
+  type MergeCardsResult,
+} from "../lib/stateTransfer";
 
 const DEFAULT_PLAYERS = ["Ela", "Ele"];
 const DEFAULT_LEVEL_INDEX = 1;
@@ -256,6 +261,27 @@ export function useGameSession() {
     return null;
   }, []);
 
+  /**
+   * Soma as cartas próprias de um arquivo às atuais. Jogadores, placar, filtros
+   * e cartas ocultas ficam como estão: é o que permite receber o baralho de
+   * outra pessoa sem perder o seu.
+   */
+  const importCards = useCallback(
+    (json: string): MergeCardsResult => {
+      const result = parseGameState(json);
+      if (!result.ok) return result;
+
+      const { added, skipped } = mergeCustomCards(
+        allCards,
+        result.state.customCards ?? [],
+        new Set(hiddenIds)
+      );
+      if (added.length) setCustomCards((cc) => [...cc, ...added]);
+      return { ok: true, added: added.length, skipped };
+    },
+    [allCards, hiddenIds]
+  );
+
   const resetAll = useCallback(() => {
     clearState();
     setPlayers(DEFAULT_PLAYERS);
@@ -301,6 +327,7 @@ export function useGameSession() {
     setAllCategories,
     exportState,
     importState,
+    importCards,
     resetAll,
   };
 }

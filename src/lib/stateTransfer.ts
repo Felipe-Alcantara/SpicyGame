@@ -6,6 +6,7 @@ import {
   type Category,
   type Mode,
 } from "../data/taxonomy";
+import { uid } from "./random";
 import type { PersistedState } from "./storage";
 
 /** Versão do formato compartilhado pelo export/import, independente da chave local. */
@@ -28,7 +29,12 @@ export type StateTransferResult =
   | { ok: true; format: "current" | "legacy"; state: Partial<TransferableState> }
   | { ok: false; error: string };
 
-const INVALID_JSON_MESSAGE = "JSON inválido — confira se você colou o texto inteiro.";
+/** Resultado de somar as cartas próprias de um arquivo, sem trocar o resto da partida. */
+export type MergeCardsResult =
+  | { ok: true; added: number; skipped: number }
+  | { ok: false; error: string };
+
+const INVALID_JSON_MESSAGE ="JSON inválido — confira se você colou o texto inteiro.";
 const INVALID_STATE_MESSAGE =
   "Estado inválido — o arquivo não segue o formato esperado do Spicy Game.";
 const UNSUPPORTED_VERSION_MESSAGE =
@@ -61,6 +67,52 @@ export function serializeGameState(state: TransferableState): string {
     scores: state.scores,
   };
   return JSON.stringify(exported, null, 2);
+}
+
+/** A mesma frase no mesmo modo é a mesma carta, com ou sem caixa e espaços a mais. */
+const cardKey = (card: CardItem) =>
+  `${card.mode}|${card.text.trim().replace(/\s+/g, " ").toLowerCase()}`;
+
+/**
+ * Escolhe quais cartas de um arquivo entram no baralho sem apagar nem trocar
+ * nenhuma que já existe. Carta que o baralho já tem (ou repetida no próprio
+ * arquivo) fica de fora; id já em uso ganha um novo. `reservedIds` guarda ids
+ * que seguem referenciados mesmo sem carta, como os das apagadas que ficaram
+ * em `hiddenIds`: reaproveitá-los entraria no baralho já oculto.
+ */
+export function mergeCustomCards(
+  existing: CardItem[],
+  incoming: CardItem[],
+  reservedIds: ReadonlySet<string>,
+  makeId: () => string = () => `custom-${uid()}`
+): { added: CardItem[]; skipped: number } {
+  const known = new Set(existing.map(cardKey));
+  const taken = new Set([...existing.map((card) => card.id), ...reservedIds]);
+  const added: CardItem[] = [];
+
+  for (const card of incoming) {
+    if (known.has(cardKey(card))) continue;
+    let id = card.id;
+    while (taken.has(id)) id = makeId();
+    known.add(cardKey(card));
+    taken.add(id);
+    added.push({ ...card, id });
+  }
+
+  return { added, skipped: incoming.length - added.length };
+}
+
+/** A frase do aviso depois de somar cartas: o que entrou e o que já estava no baralho. */
+export function describeMergeResult({ added, skipped }: { added: number; skipped: number }): string {
+  if (added === 0 && skipped === 0) return "O arquivo não tem cartas próprias para somar.";
+  if (added === 0) {
+    return skipped === 1
+      ? "Nenhuma carta nova: a do arquivo já estava no seu baralho."
+      : `Nenhuma carta nova: as ${skipped} do arquivo já estavam no seu baralho.`;
+  }
+  const entered = `${added} ${added === 1 ? "carta somada" : "cartas somadas"} ao seu baralho`;
+  if (skipped === 0) return `${entered}.`;
+  return `${entered}; ${skipped} ${skipped === 1 ? "já estava" : "já estavam"} nele.`;
 }
 
 /**
