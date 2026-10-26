@@ -161,7 +161,16 @@ total e não há saída pela interface.
 **Encaminhamento:** task nova (Média): hidratar pelo mesmo normalizador da
 importação e descartar só o que for inválido.
 
-### P2 — Os dados do usuário têm pouca proteção
+### P2 — Os dados do usuário têm pouca proteção · **resolvido em 26/10**
+
+> **Atualização de 26/10/2026.** Excluir carta própria agora pede confirmação
+> (modal com o texto da carta); exportar virou **Copiar** e **Baixar**
+> (`spicy-game-AAAA-MM-DD.json`), e a cópia que falha mostra o JSON num campo
+> selecionável; importar explica o que substitui e ganhou o caminho **"Só somar
+> cartas"**, que acrescenta as cartas próprias do arquivo sem apagar nada. O
+> formato `version: 1` não mudou. Commits `4b8a5f8`, `e1d3f04`, `16955ad`,
+> `ca5af93` e `ea0edb2`. Sem desfazer depois de confirmar e sem cópia de segurança
+> automática antes de "Substituir tudo". O texto abaixo é o diagnóstico original.
 
 Exportar é o único backup que existe, e:
 
@@ -249,7 +258,7 @@ Comparação recurso a recurso com `src/CoupleNightGame.tsx` em `9c40328`:
 | Cartas próprias: criar, editar, duplicar, excluir, ocultar | presentes |
 | Biblioteca com busca, filtro de modo e "só ativas" | presentes |
 | Cronômetro | presente (`useTimer`) |
-| Exportar, importar, resetar | presentes; reset ganhou confirmação, import ganhou validação |
+| Exportar, importar, resetar | presentes; reset ganhou confirmação, import ganhou validação (e, em 26/10, escolha entre substituir e somar, backup em arquivo e cópia manual) |
 | Easter egg do coração | virou o recado do `SecretModal`, como decidido em 17/08 |
 | "Pack de sessão" (`importSessionPack`) | **não era regressão:** o monolito declarava a função, mas nenhum botão a chamava e o pool nunca lia `sessionPacks` — era código morto |
 
@@ -360,8 +369,10 @@ existir.
   sexual explícito). Se o gatilho vier, o PWA precisa de manifesto, ícones,
   service worker com cache versionado e teste offline em Android e iOS.
 - **Baralhos compartilháveis:** o export/import leva o estado inteiro e
-  **substitui** o do outro lado. Para compartilhar baralho sem apagar o de quem
-  recebe, falta um "importar como pacote" que só acrescente cartas.
+  "Substituir tudo" troca o do outro lado. Desde 26/10 o modal tem também
+  "Só somar cartas", que acrescenta as cartas próprias do arquivo sem apagar as
+  de quem recebe — falta, se houver demanda, um arquivo só de cartas (hoje se
+  compartilha o backup inteiro e o outro lado só usa as cartas).
 
 ---
 

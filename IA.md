@@ -955,3 +955,93 @@ captura.
 - A contagem de textos varia em ±1 entre execuções (440 e 439 no desktop), por
   animação em andamento.
 - O desktop com mouse segue com alvos de 24 a 42 px, todos acima do mínimo AA.
+
+## [2026-10-26] Dados do usuário: excluir com confirmação, importar sem apagar e backup em arquivo
+
+### Contexto
+
+Pendência da auditoria de 27/09 (P2, "Os dados do usuário têm pouca proteção"):
+exportar era o único backup e só copiava para a área de transferência; excluir
+carta própria era um toque sem volta; e importar substituía tudo sem dizer, o que
+inviabilizava receber o baralho de outra pessoa. Task: SpicyGame/Dados — proteger
+as cartas próprias e o backup do usuário.
+
+### Decisões
+
+- **Excluir pede confirmação, em vez de desfazer pelo toast.** O critério era
+  "nenhuma perda de carta própria com um toque só": com desfazer, a carta some num
+  toque e só volta se a pessoa vir o aviso a tempo (3,2 s). O modal é o mesmo
+  padrão do "Apagar tudo?" e mostra o texto da carta. Desfazer após confirmar não
+  existe — fica como possibilidade, não como pendência.
+- **Importar tem dois caminhos explícitos.** "Substituir tudo" é o comportamento de
+  sempre, agora dito com as palavras e com a contagem de cartas próprias que a
+  pessoa tem hoje. "Só somar cartas" é novo e usa o mesmo `parseGameState`: não toca
+  em jogadores, placar, filtros nem ocultas. Carta igual a uma que já existe (mesmo
+  modo e mesmo texto, sem contar caixa e espaços; vale também contra o baralho base
+  e contra repetidas dentro do arquivo) é ignorada; id já em uso — inclusive o de
+  carta apagada que segue em `hiddenIds`, para não entrar oculta — ganha id novo.
+- **Escolher arquivo ao importar** foi acrescentado além do pedido: um backup que
+  só volta abrindo o arquivo, copiando e colando é meio backup, principalmente no
+  celular. São poucas linhas e não muda o formato.
+- **Exportar vira Copiar e Baixar.** O arquivo se chama `spicy-game-AAAA-MM-DD.json`
+  (data local). Se a cópia falhar — o navegador nega ou a página nem tem área de
+  transferência — abre um campo só de leitura, já selecionado, com o JSON exato.
+- **O formato `version: 1` não mudou**: `Baixar` entrega o mesmo `serializeGameState`.
+
+### O que mudou
+
+- `ea0edb2` — `Modal` com `max-h-full` e rolagem interna (achado na validação,
+  abaixo).
+- `4b8a5f8` — `CardsManager`: a lixeira abre a confirmação; `src/test-render.ts`
+  (ajudas de teste de tela com react-test-renderer, sem dependência nova).
+- `e1d3f04` — `mergeCustomCards`, `describeMergeResult` e `importCards` no hook.
+- `16955ad` — `src/lib/download.ts`, `exportFileName`, Copiar/Baixar e o campo de
+  cópia manual no `DataPanel`.
+- `ca5af93` — o modal de importar com os dois caminhos e o seletor de arquivo,
+  README e `docs/` regerado (`index-f0C0LsqC.js`, `index-Xow0FxPP.css`).
+
+### Validação
+
+- `npm run lint`, `typecheck` e `build` limpos; `npm test`: **120** (97 + 23 novos:
+  6 em `stateTransfer`, 3 no hook, 3 em `CardsManager`, 11 em `DataPanel`). Todos
+  falharam antes da implementação; o primeiro, por `onDelete` ser chamado com um
+  toque. Quebrei de propósito cinco comportamentos e cada quebra derrubou os testes
+  certos: lixeira apagando direto (3 testes), cópia que falha sem mostrar o texto
+  (2), "somar" chamando a substituição (2), id repetido mantido (3) e duplicata não
+  ignorada (2); restaurado, voltou a passar. `npm run mutacao`: 15 de 15 mortas.
+- **No Chrome headless, com cliques reais por coordenada: 28 conferências, todas
+  passaram** (celular 390×844, 360×560 e 740×360, desktop 1280×900): a lixeira só
+  pergunta; Cancelar não apaga; Excluir apaga só a carta certa; Baixar gera
+  `spicy-game-2026-10-26.json` com o JSON versionado; com a cópia negada pelo
+  navegador (permissão `clipboard-write` negada) o campo abre com o JSON idêntico,
+  só leitura e selecionado; com a permissão liberada o clipboard recebe o mesmo
+  JSON; o seletor de arquivo do Chrome coloca o conteúdo no campo; "Só somar" entra
+  2 cartas (uma com id repetido, que ganhou id novo), ignora 1 e deixa jogadores,
+  placar e nível como estavam; "Substituir tudo" troca a partida; JSON inválido
+  mostra o erro e mantém o texto; nenhum erro de console. O bundle validado tem o
+  mesmo `sha256` do que foi commitado em `docs/` (`cf1d23c75e3c…`).
+- **A validação achou um defeito meu:** o modal de importar, mais alto com o texto
+  novo, passava 15 px da janela em 360×560 e, deitado (740×360), tinha 470 px numa
+  janela de 360: título cortado e o botão "Só somar cartas" inalcançável. Corrigido
+  no `Modal` compartilhado (`ea0edb2`) e medido de novo.
+- `npm run acessibilidade`: gaveta no celular com 174 alvos (era 173; "Exportar"
+  virou "Copiar" e "Baixar"), **0 abaixo de 44 px**, 0 de 423 textos abaixo do AA.
+- O modal de importar, que a medição de 26/10 não cobria, foi visto em captura nos
+  três tamanhos, assim como os de copiar manual e excluir. O de resetar não foi
+  alterado nem visto, e o contraste dos modais novos não passou pela medição.
+
+### Limitações
+
+- **Sem desfazer depois de confirmar** a exclusão, e "Substituir tudo" não guarda
+  cópia de segurança do que apagou — a proteção é o texto claro e o botão de baixar
+  antes.
+- **Só Chrome headless no Windows.** Download por Blob, cópia e seletor de arquivo
+  não foram vistos em Safari/iOS nem em WebView de aplicativo, onde a área de
+  transferência costuma negar (é o caso que o campo manual cobre).
+- **A rolagem do `Modal` em tela baixa só tem a medição manual**: o script de
+  validação ficou fora do repositório e a suíte não roda navegador. Os testes de
+  tela (react-test-renderer) conferem comportamento, não layout nem CSS.
+- Os avisos (toast) ficam 3,2 s no rodapé e têm `pointer-events-auto`: no celular
+  eles cobrem os botões do fim da gaveta, como "Copiar" logo depois de "Baixar".
+  Já era assim; só ficou mais visível com dois botões de exportar.
+- Sem teste em aparelho físico (task de Mobile continua aberta).
