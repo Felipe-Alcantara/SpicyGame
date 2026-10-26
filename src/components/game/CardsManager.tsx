@@ -17,6 +17,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui
 import { Button } from "../ui/Button";
 import { Input, Select, Textarea } from "../ui/Field";
 import { Badge } from "../ui/Badge";
+import { Modal } from "../ui/Modal";
 import { cn } from "../../lib/cn";
 
 const PAGE_SIZE = 60;
@@ -44,6 +45,7 @@ export function CardsManager({
   const [onlyActive, setOnlyActive] = useState(false);
   const [limit, setLimit] = useState(PAGE_SIZE);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<CardItem | null>(null);
 
   const customIds = useMemo(() => new Set(customCards.map((c) => c.id)), [customCards]);
 
@@ -58,152 +60,178 @@ export function CardsManager({
   }, [allCards, modeFilter, query, onlyActive, hiddenIds]);
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          <Library size={16} /> Biblioteca
-        </CardTitle>
-        <CardDescription>
-          {rows.length} de {allCards.length} cartas.
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="min-w-[180px] flex-1">
-            <Input
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setLimit(PAGE_SIZE);
-              }}
-              placeholder="Buscar no texto…"
-              aria-label="Buscar carta"
-            />
-          </div>
-          <Select
-            value={modeFilter}
-            onChange={(e) => setModeFilter(e.target.value as Mode | "all")}
-            aria-label="Filtrar por modo"
-            className="w-auto"
-          >
-            <option value="all">Todos os modos</option>
-            {MODES.map((m) => (
-              <option key={m} value={m}>
-                {MODE_LABELS[m]}
-              </option>
-            ))}
-          </Select>
-          <label className="flex min-h-6 items-center gap-2 text-xs text-rose-100/60 toque:min-h-11">
-            <input
-              type="checkbox"
-              className="h-5 w-5 accent-rose-500"
-              checked={onlyActive}
-              onChange={(e) => setOnlyActive(e.target.checked)}
-            />
-            Só ativas
-          </label>
-        </div>
-
-        <div className="spicy-scroll max-h-[420px] space-y-2 overflow-auto pr-1">
-          {rows.length === 0 && (
-            <p className="text-sm text-rose-100/60">Nenhuma carta com esse filtro.</p>
-          )}
-          {rows.slice(0, limit).map((card) => {
-            const isCustom = customIds.has(card.id);
-            const hidden = hiddenIds.includes(card.id);
-            return (
-              <div
-                key={card.id}
-                className={cn(
-                  "rounded-2xl border border-white/10 bg-black/20 p-3 transition",
-                  hidden && "opacity-45"
-                )}
-              >
-                <p className="text-sm">{card.text}</p>
-                <div className="mt-2 flex flex-wrap items-center gap-1.5">
-                  <Badge className={isCustom ? "border-rose-400/40 bg-rose-500/20 text-rose-100" : ""}>
-                    {isCustom ? "minha" : "base"}
-                  </Badge>
-                  <Badge>{MODE_LABELS[card.mode]}</Badge>
-                  <Badge>{LEVEL_LABELS[card.level]}</Badge>
-                  {card.cats.map((c) => (
-                    <Badge key={c}>{CATEGORY_LABELS[c]}</Badge>
-                  ))}
-                  <div className="ml-auto flex gap-1">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onToggleHidden(card.id)}
-                      aria-label={hidden ? "Reativar carta" : "Ocultar carta"}
-                    >
-                      {hidden ? <Eye size={14} /> : <EyeOff size={14} />}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onDuplicate(card)}
-                      aria-label="Duplicar carta"
-                    >
-                      <Copy size={14} />
-                    </Button>
-                    {isCustom && (
-                      <>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setEditingId(editingId === card.id ? null : card.id)}
-                          aria-label="Editar carta"
-                        >
-                          <Edit3 size={14} />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => onDelete(card.id)}
-                          aria-label="Excluir carta"
-                        >
-                          <Trash2 size={14} />
-                        </Button>
-                      </>
-                    )}
-                  </div>
-                </div>
-
-                <AnimatePresence>
-                  {editingId === card.id && (
-                    <motion.div
-                      initial={{ opacity: 0, height: 0 }}
-                      animate={{ opacity: 1, height: "auto" }}
-                      exit={{ opacity: 0, height: 0 }}
-                      className="overflow-hidden"
-                    >
-                      <CardEditor
-                        card={card}
-                        onCancel={() => setEditingId(null)}
-                        onSave={(patch) => {
-                          onEdit(card.id, patch);
-                          setEditingId(null);
-                        }}
-                      />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
-            );
-          })}
-
-          {rows.length > limit && (
-            <Button
-              variant="secondary"
-              className="w-full"
-              onClick={() => setLimit((l) => l + PAGE_SIZE)}
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>
+            <Library size={16} /> Biblioteca
+          </CardTitle>
+          <CardDescription>
+            {rows.length} de {allCards.length} cartas.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="min-w-[180px] flex-1">
+              <Input
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setLimit(PAGE_SIZE);
+                }}
+                placeholder="Buscar no texto…"
+                aria-label="Buscar carta"
+              />
+            </div>
+            <Select
+              value={modeFilter}
+              onChange={(e) => setModeFilter(e.target.value as Mode | "all")}
+              aria-label="Filtrar por modo"
+              className="w-auto"
             >
-              Mostrar mais ({rows.length - limit} restantes)
+              <option value="all">Todos os modos</option>
+              {MODES.map((m) => (
+                <option key={m} value={m}>
+                  {MODE_LABELS[m]}
+                </option>
+              ))}
+            </Select>
+            <label className="flex min-h-6 items-center gap-2 text-xs text-rose-100/60 toque:min-h-11">
+              <input
+                type="checkbox"
+                className="h-5 w-5 accent-rose-500"
+                checked={onlyActive}
+                onChange={(e) => setOnlyActive(e.target.checked)}
+              />
+              Só ativas
+            </label>
+          </div>
+
+          <div className="spicy-scroll max-h-[420px] space-y-2 overflow-auto pr-1">
+            {rows.length === 0 && (
+              <p className="text-sm text-rose-100/60">Nenhuma carta com esse filtro.</p>
+            )}
+            {rows.slice(0, limit).map((card) => {
+              const isCustom = customIds.has(card.id);
+              const hidden = hiddenIds.includes(card.id);
+              return (
+                <div
+                  key={card.id}
+                  className={cn(
+                    "rounded-2xl border border-white/10 bg-black/20 p-3 transition",
+                    hidden && "opacity-45"
+                  )}
+                >
+                  <p className="text-sm">{card.text}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-1.5">
+                    <Badge className={isCustom ? "border-rose-400/40 bg-rose-500/20 text-rose-100" : ""}>
+                      {isCustom ? "minha" : "base"}
+                    </Badge>
+                    <Badge>{MODE_LABELS[card.mode]}</Badge>
+                    <Badge>{LEVEL_LABELS[card.level]}</Badge>
+                    {card.cats.map((c) => (
+                      <Badge key={c}>{CATEGORY_LABELS[c]}</Badge>
+                    ))}
+                    <div className="ml-auto flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onToggleHidden(card.id)}
+                        aria-label={hidden ? "Reativar carta" : "Ocultar carta"}
+                      >
+                        {hidden ? <Eye size={14} /> : <EyeOff size={14} />}
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDuplicate(card)}
+                        aria-label="Duplicar carta"
+                      >
+                        <Copy size={14} />
+                      </Button>
+                      {isCustom && (
+                        <>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setEditingId(editingId === card.id ? null : card.id)}
+                            aria-label="Editar carta"
+                          >
+                            <Edit3 size={14} />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => setDeleting(card)}
+                            aria-label="Excluir carta"
+                          >
+                            <Trash2 size={14} />
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <AnimatePresence>
+                    {editingId === card.id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="overflow-hidden"
+                      >
+                        <CardEditor
+                          card={card}
+                          onCancel={() => setEditingId(null)}
+                          onSave={(patch) => {
+                            onEdit(card.id, patch);
+                            setEditingId(null);
+                          }}
+                        />
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              );
+            })}
+
+            {rows.length > limit && (
+              <Button
+                variant="secondary"
+                className="w-full"
+                onClick={() => setLimit((l) => l + PAGE_SIZE)}
+              >
+                Mostrar mais ({rows.length - limit} restantes)
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* fora do Card: o backdrop-blur dele prenderia o modal dentro da caixa */}
+      <Modal
+        open={deleting !== null}
+        onClose={() => setDeleting(null)}
+        title="Excluir esta carta?"
+        description={deleting ? `“${deleting.text}” sai do seu baralho. Não dá para desfazer.` : undefined}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setDeleting(null)}>
+              Cancelar
             </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+            <Button
+              variant="danger"
+              onClick={() => {
+                if (deleting) onDelete(deleting.id);
+                setDeleting(null);
+              }}
+            >
+              Excluir
+            </Button>
+          </>
+        }
+      />
+    </>
   );
 }
 
