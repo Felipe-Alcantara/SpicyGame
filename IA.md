@@ -773,3 +773,13 @@ leitura sem esperar a animação contou uma carta de Desafio como de Verdade.
   `index.html` (o build gera `\r\r\n` em `docs/index.html`). O CI roda em Linux
   e não é afetado; localmente, converti esses dois arquivos para LF antes do
   gate, sem commitar. Fica task para blindar com `.gitattributes`.
+
+### Complemento (26/10, mesmo dia): a virada precisava de um teste de ordem
+
+A task do baralho dizia que a regra "a virada não abre com a última carta" também
+mataria a mutação "fim do baralho não reembaralha". Medi e **não mata**: com a
+virada recomeçando no cursor 0 sem reembaralhar, o teste da virada passa, porque
+a primeira carta do baralho antigo nunca é a última dele. O commit
+`test: exigir ordem nova na virada do baralho` acrescentou um teste de ordem (com
+`Math.random` fixo, onde dois embaralhamentos seguidos não devolvem a ordem
+original); só ele acusa essa mutação. Com ele são nove testes novos e 72 na suíte.

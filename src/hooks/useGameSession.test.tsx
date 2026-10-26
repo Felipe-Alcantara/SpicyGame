@@ -392,6 +392,18 @@ describe("useGameSession — baralho por modo", () => {
     }
   });
 
+  it("a virada embaralha de novo em vez de repetir a ordem do ciclo anterior", () => {
+    // random fixo: cada embaralhamento vira uma rotação, então dois seguidos não devolvem a ordem original
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    const session = startSession();
+    const primeiro = idsDoBaralho(session);
+    for (let passo = 0; passo < primeiro.length; passo += 1) proxima(session);
+
+    expect(session.get().cursor).toBe(0);
+    expect([...idsDoBaralho(session)].sort()).toEqual([...primeiro].sort());
+    expect(idsDoBaralho(session)).not.toEqual(primeiro);
+  });
+
   it("mudar o pool mantém as cartas vistas e a ordem das não vistas", () => {
     const session = startSession();
     for (let passo = 0; passo < 3; passo += 1) proxima(session);
