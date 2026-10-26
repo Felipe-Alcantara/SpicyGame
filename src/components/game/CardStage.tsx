@@ -44,10 +44,11 @@ export function CardStage({
   const timer = useTimer();
 
   // O texto é resolvido uma vez por carta: sem isso os nomes sorteados
-  // mudariam a cada render e a frase trocaria de pessoa sozinha.
+  // mudariam a cada render e a frase trocaria de pessoa sozinha. O texto entra
+  // na chave para a edição de uma carta própria aparecer na carta da tela.
   const text = useMemo(
     () => (card ? replacePlaceholders(card.text, players) : ""),
-    [card?.id, position, players]
+    [card?.id, card?.text, position, players]
   );
 
   useEffect(() => {

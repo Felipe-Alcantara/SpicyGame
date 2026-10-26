@@ -330,6 +330,135 @@ describe("useGameSession — baralho e filtros", () => {
   });
 });
 
+describe("useGameSession — baralho por modo", () => {
+  const idsDoBaralho = (session: MountedSession) => session.get().deck.map((card) => card.id);
+  const irParaModo = (session: MountedSession, mode: "truth" | "dare" | "never") =>
+    session.update(() => session.get().setCurrentMode(mode));
+  const proxima = (session: MountedSession) => session.update(() => session.get().nextCard());
+
+  it("alternar Verdade e Desafio não repete carta em 10 rodadas", () => {
+    // random fixo: hoje cada troca de modo reembaralha igual e devolve sempre a mesma carta
+    vi.spyOn(Math, "random").mockReturnValue(0);
+    const session = startSession();
+    const verdade: (string | undefined)[] = [];
+    const desafio: (string | undefined)[] = [];
+
+    for (let rodada = 0; rodada < 10; rodada += 1) {
+      irParaModo(session, "truth");
+      verdade.push(session.get().currentCard?.id);
+      irParaModo(session, "dare");
+      desafio.push(session.get().currentCard?.id);
+    }
+
+    irParaModo(session, "truth");
+    expect(session.get().poolSize).toBeGreaterThanOrEqual(10);
+    expect(new Set(verdade).size).toBe(10);
+    expect(new Set(desafio).size).toBe(10);
+  });
+
+  it("voltar a um modo segue o baralho dele, já na carta seguinte à que foi vista", () => {
+    const session = startSession();
+    irParaModo(session, "truth");
+    const antes = idsDoBaralho(session);
+
+    irParaModo(session, "dare");
+    irParaModo(session, "truth");
+
+    expect(idsDoBaralho(session)).toEqual(antes);
+    expect(session.get().cursor).toBe(1);
+  });
+
+  it("clicar no modo que já está aberto não gasta carta", () => {
+    const session = startSession();
+    irParaModo(session, "truth");
+
+    irParaModo(session, "truth");
+
+    expect(session.get().cursor).toBe(0);
+  });
+
+  it("na virada do baralho nunca abre com a carta que acabou de sair", () => {
+    const session = startSession();
+    const [, , ...demais] = session.get().deck;
+    session.update(() => {
+      for (const card of demais) session.get().toggleHidden(card.id);
+    });
+    expect(session.get().deck).toHaveLength(2);
+
+    for (let passo = 0; passo < 100; passo += 1) {
+      const anterior = session.get().currentCard?.id;
+      proxima(session);
+      expect(session.get().currentCard?.id).not.toBe(anterior);
+    }
+  });
+
+  it("mudar o pool mantém as cartas vistas e a ordem das não vistas", () => {
+    const session = startSession();
+    for (let passo = 0; passo < 3; passo += 1) proxima(session);
+    const antes = idsDoBaralho(session);
+    const ocultaId = antes[10];
+    if (!ocultaId) throw new Error("O baralho de teste deveria ter mais de 10 cartas");
+
+    session.update(() => session.get().toggleHidden(ocultaId));
+    expect(session.get().cursor).toBe(3);
+    expect(idsDoBaralho(session)).toEqual(antes.filter((id) => id !== ocultaId));
+
+    session.update(() =>
+      session.get().addCustomCard({ mode: "never", text: "Nova", level: "cute", cats: ["cute"] }),
+    );
+    const depois = idsDoBaralho(session);
+    const semAOcultada = antes.filter((id) => id !== ocultaId);
+    expect(session.get().cursor).toBe(3);
+    expect(depois.slice(0, 4)).toEqual(semAOcultada.slice(0, 4));
+    expect(depois.filter((id) => id.startsWith("custom-"))).toHaveLength(1);
+    expect(depois.filter((id) => !id.startsWith("custom-"))).toEqual(semAOcultada);
+  });
+
+  it("ocultar a carta da tela passa para a próxima não vista", () => {
+    const session = startSession();
+    proxima(session);
+    proxima(session);
+    const antes = idsDoBaralho(session);
+    const naTela = session.get().currentCard?.id;
+    if (!naTela) throw new Error("O baralho deveria ter carta na tela");
+
+    session.update(() => session.get().toggleHidden(naTela));
+
+    expect(session.get().cursor).toBe(2);
+    expect(session.get().currentCard?.id).toBe(antes[3]);
+  });
+
+  it("ocultar a última carta do baralho abre um ciclo novo em vez de ficar sem carta", () => {
+    const session = startSession();
+    const [, , ...demais] = session.get().deck;
+    session.update(() => {
+      for (const card of demais) session.get().toggleHidden(card.id);
+    });
+    proxima(session);
+    const ultima = session.get().currentCard?.id;
+    if (!ultima) throw new Error("O baralho de duas cartas deveria ter carta na tela");
+
+    session.update(() => session.get().toggleHidden(ultima));
+
+    expect(session.get().deck).toHaveLength(1);
+    expect(session.get().currentCard).toBeDefined();
+    expect(session.get().currentCard?.id).not.toBe(ultima);
+  });
+
+  it("editar o texto de uma carta própria atualiza a carta que já está no baralho", () => {
+    const session = startSession();
+    session.update(() =>
+      session.get().addCustomCard({ mode: "never", text: "Texto antigo", level: "cute", cats: ["cute"] }),
+    );
+    const id = session.get().customCards[0]?.id;
+    if (!id) throw new Error("A carta customizada não foi criada");
+
+    session.update(() => session.get().updateCustomCard(id, { text: "Texto novo" }));
+
+    expect(session.get().deck.find((card) => card.id === id)?.text).toBe("Texto novo");
+  });
+});
+
 describe("useGameSession — jogadores, cartas e exportação", () => {
   it("normaliza jogadores, pontua sem permitir placar negativo e remove o score junto", () => {
     const session = startSession();
