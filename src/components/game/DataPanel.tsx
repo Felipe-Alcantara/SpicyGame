@@ -1,28 +1,37 @@
-import { useState } from "react";
-import { Copy, Download, Trash2, Upload } from "lucide-react";
+import { ChangeEvent, useRef, useState } from "react";
+import { Copy, Download, FileUp, Trash2, Upload } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../ui/Card";
 import { Button } from "../ui/Button";
 import { Textarea } from "../ui/Field";
 import { Modal } from "../ui/Modal";
 import { useToast } from "../ui/Toast";
 import { downloadJson } from "../../lib/download";
-import { exportFileName } from "../../lib/stateTransfer";
+import {
+  describeMergeResult,
+  exportFileName,
+  type MergeCardsResult,
+} from "../../lib/stateTransfer";
 
 /** Exportar, importar e resetar o estado salvo neste navegador. */
 export function DataPanel({
   onExport,
   onImport,
+  onMergeCards,
   onReset,
+  customCardCount,
 }: {
   onExport: () => string;
   onImport: (json: string) => string | null;
+  onMergeCards: (json: string) => MergeCardsResult;
   onReset: () => void;
+  customCardCount: number;
 }) {
   const notify = useToast();
   const [importOpen, setImportOpen] = useState(false);
   const [resetOpen, setResetOpen] = useState(false);
   const [json, setJson] = useState("");
   const [manualJson, setManualJson] = useState<string | null>(null);
+  const fileInput = useRef<HTMLInputElement>(null);
 
   async function copy() {
     const data = onExport();
@@ -42,7 +51,20 @@ export function DataPanel({
     notify(`Backup baixado: ${name}.`, "success");
   }
 
-  function confirmImport() {
+  async function pickFile(e: ChangeEvent<HTMLInputElement>) {
+    const input = e.target;
+    const file = input.files?.[0];
+    if (!file) return;
+    try {
+      setJson(await file.text());
+    } catch {
+      notify("Não consegui ler esse arquivo.", "error");
+    } finally {
+      input.value = ""; // sem isto, escolher o mesmo arquivo de novo não dispara nada
+    }
+  }
+
+  function replaceAll() {
     const error = onImport(json);
     if (error) {
       notify(error, "error");
@@ -52,6 +74,19 @@ export function DataPanel({
     setJson("");
     notify("Estado importado com sucesso.", "success");
   }
+
+  function mergeCards() {
+    const result = onMergeCards(json);
+    if (!result.ok) {
+      notify(result.error, "error");
+      return;
+    }
+    setImportOpen(false);
+    setJson("");
+    notify(describeMergeResult(result), result.added > 0 ? "success" : "info");
+  }
+
+  const mine = customCardCount === 1 ? "1 carta própria" : `${customCardCount} cartas próprias`;
 
   return (
     <>
@@ -82,16 +117,19 @@ export function DataPanel({
         open={importOpen}
         onClose={() => setImportOpen(false)}
         title="Importar estado"
-        description="Cole um JSON exportado pelo Spicy Game, atual ou legado."
+        description="Cole o JSON ou escolha o arquivo exportado pelo Spicy Game, atual ou legado."
         footer={
-          <>
+          <div className="flex w-full flex-wrap justify-end gap-2">
             <Button variant="secondary" onClick={() => setImportOpen(false)}>
               Cancelar
             </Button>
-            <Button onClick={confirmImport} disabled={!json.trim()}>
-              Importar
+            <Button variant="danger" onClick={replaceAll} disabled={!json.trim()}>
+              Substituir tudo
             </Button>
-          </>
+            <Button onClick={mergeCards} disabled={!json.trim()}>
+              Só somar cartas
+            </Button>
+          </div>
         }
       >
         <Textarea
@@ -100,6 +138,35 @@ export function DataPanel({
           placeholder='{ "version": 1, "players": [...], "currentMode": "truth", ... }'
           aria-label="JSON do estado da partida"
         />
+        <input
+          ref={fileInput}
+          type="file"
+          accept="application/json,.json"
+          onChange={pickFile}
+          className="hidden"
+          tabIndex={-1}
+          aria-hidden="true"
+        />
+        <Button
+          variant="secondary"
+          size="sm"
+          className="mt-2"
+          onClick={() => fileInput.current?.click()}
+        >
+          <FileUp size={14} /> Escolher arquivo
+        </Button>
+        <div className="mt-4 space-y-2 rounded-2xl border border-white/10 bg-black/20 p-3 text-xs text-rose-100/60">
+          <p>
+            <strong className="text-rose-50">Substituir tudo</strong> apaga o que você tem hoje —
+            jogadores, placar, nível, filtros, cartas ocultas e {mine} — e coloca no lugar o que
+            está no arquivo.
+          </p>
+          <p>
+            <strong className="text-rose-50">Só somar cartas</strong> acrescenta ao seu baralho as
+            cartas próprias do arquivo e não apaga nada. Carta que você já tem (mesmo modo e mesmo
+            texto) é ignorada.
+          </p>
+        </div>
       </Modal>
 
       <Modal

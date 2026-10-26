@@ -20,10 +20,12 @@ aparelho.
   Mudar filtros ou cartas não reembaralha: as já vistas ficam e as novas entram
   entre as que faltam.
 - **Placar de goles** por jogador.
-- **Cartas suas**: criar, editar, duplicar as do baralho base e ocultar as que
-  não têm a ver com vocês.
+- **Cartas suas**: criar, editar, excluir (com confirmação), duplicar as do
+  baralho base e ocultar as que não têm a ver com vocês.
 - **Exportar e importar** a partida completa em JSON versionado: jogadores, modo,
-  nível, categorias, cartas próprias, cartas ocultas e placar.
+  nível, categorias, cartas próprias, cartas ocultas e placar. Dá para copiar ou
+  baixar como arquivo e, ao importar, escolher entre substituir tudo e só somar
+  as cartas próprias do arquivo.
 - **Funciona no celular**: carta arrastável, painel de ajustes em gaveta e
   atalhos de teclado (`←` `→` e espaço) no computador.
 
@@ -74,6 +76,22 @@ cartas próprias são rejeitados para evitar duas cartas com a mesma identidade.
 Exportações antigas sem `version` continuam aceitas quando contêm os quatro
 campos originais (`players`, `customCards`, `hiddenIds` e `scores`). Como esses
 arquivos não conhecem modo, nível ou categorias, os filtros atuais são mantidos.
+
+#### Copiar, baixar e importar
+
+**Copiar** e **Baixar** entregam o mesmo JSON; o arquivo se chama
+`spicy-game-AAAA-MM-DD.json`, com a data local. Se o navegador negar a cópia,
+um campo só de leitura mostra o texto, já selecionado. **Importar** aceita o
+JSON colado ou o arquivo escolhido e tem dois caminhos:
+
+- **Substituir tudo** troca jogadores, placar, nível, filtros, cartas ocultas e
+  cartas próprias pelo que está no arquivo.
+- **Só somar cartas** acrescenta as cartas próprias do arquivo e não mexe em mais
+  nada — é o caminho para receber o baralho de outra pessoa. Carta que o baralho
+  já tem (mesmo modo e mesmo texto, sem contar caixa e espaços) é ignorada, e um
+  id que já está em uso ganha um id novo.
+
+O formato `version: 1` não mudou com isso.
 
 ## Como rodar
 

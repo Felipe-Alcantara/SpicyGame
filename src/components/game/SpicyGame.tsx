@@ -84,7 +84,9 @@ export function SpicyGame() {
       <DataPanel
         onExport={game.exportState}
         onImport={game.importState}
+        onMergeCards={game.importCards}
         onReset={game.resetAll}
+        customCardCount={game.customCards.length}
       />
     </div>
   );
