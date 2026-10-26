@@ -94,6 +94,7 @@ npm run preview    # serve o build local
 npm run typecheck  # só a checagem de tipos
 npm test           # suíte completa de testes (vitest)
 npm run mutacao    # quebra 15 regras de propósito e confere que a suíte acusa (~20 s)
+npm run acessibilidade  # mede alvos de toque e contraste do build (precisa do Chrome e de npm run build)
 ```
 
 ### Teste de mutação
@@ -106,6 +107,22 @@ o arquivo depois de cada rodada e termina com erro se alguma sobreviver. A lista
 fica em `scripts/mutacoes.mjs`, com um trecho de uma linha por regra: se o código
 mudar e o trecho sumir, o `npm test` acusa (`scripts/mutacoes.test.mjs`) e a
 mutação precisa ser atualizada.
+
+### Medição de acessibilidade
+
+`npm run acessibilidade` abre o build (`docs/`) num Chrome headless, no celular
+(390×844, `pointer: coarse`) e no desktop (1280×900), e mede o tamanho de cada
+alvo de toque e o contraste de cada texto — na tela inicial, no modal do
+Segredo e na gaveta de Ajustes. Termina com erro se algum alvo ficar abaixo de
+24 px (WCAG 2.5.8, AA) ou algum texto abaixo do AA (4,5:1; 3:1 se grande);
+`--detalhes` lista cada alvo abaixo de 44 px e cada texto reprovado, `--json`
+devolve tudo. Rode `npm run build` antes. `CHROME_PATH` aponta para outro
+Chrome/Chromium/Edge.
+
+A medição de contraste é uma aproximação, boa para achar os piores casos e não
+para certificar: usa as cores de fundo dos ancestrais (gradiente: pior caso
+entre as paradas) e não considera desfoque nem sombras. Os limites estão no
+topo de `scripts/acessibilidade.mjs`.
 
 ### Publicar
 
