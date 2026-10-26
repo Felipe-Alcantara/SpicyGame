@@ -783,3 +783,89 @@ a primeira carta do baralho antigo nunca é a última dele. O commit
 `test: exigir ordem nova na virada do baralho` acrescentou um teste de ordem (com
 `Math.random` fixo, onde dois embaralhamentos seguidos não devolvem a ordem
 original); só ele acusa essa mutação. Com ele são nove testes novos e 72 na suíte.
+
+## [2026-10-26] As 15 mutações mortas: testes que faltavam, script no repositório e actions na v7
+
+### Contexto
+
+A auditoria de 27/09 quebrou 15 regras críticas de propósito, uma por vez, e três
+passavam por toda a suíte: nível máximo exclusivo, fim do baralho sem reembaralhar
+e ausência da trava `hydrated`. O script usado ficou fora do repositório, então
+não havia como repetir a medição. O workflow `Quality` também mostrava a
+anotação "Node.js 20 is deprecated" (`actions/checkout@v4` e `actions/setup-node@v4`).
+
+### Decisões
+
+- **Script no repositório.** `npm run mutacao` (`scripts/mutacoes.mjs`) repete a
+  medição em ~20 s: quebra um trecho de **uma linha** por regra (robusto a CRLF),
+  roda a suíte, restaura o arquivo e termina com erro se alguma mutação
+  sobreviver. Recusa trecho que sumiu ou apareceu duas vezes, e conta como
+  *inválida* (não morta) a mutação que só quebra o carregamento da suíte, para não
+  inflar o placar. O teste do próprio script (`scripts/mutacoes.test.mjs`) fica
+  fora das rodadas de mutação, porque lê o código-fonte mutado.
+- **As 15 mutações foram reconstruídas** a partir das regras descritas na
+  auditoria (o código original delas não foi guardado): não são necessariamente
+  idênticas, byte a byte, às de 27/09, e o placar abaixo vale para estas.
+- **A trava `hydrated` não dá para testar pelo sintoma no `react-test-renderer`:**
+  ele não monta efeitos duas vezes sob StrictMode (medido: 1 efeito em 5
+  configurações, legado e concorrente, com `StrictMode` e com `unstable_strictMode`).
+  O teste confere a causa — nenhuma gravação do estado padrão antes da
+  hidratação. Simular o StrictMode de verdade exigiria `jsdom`/`happy-dom`.
+- **Fora do CI, por ora.** Rodar as mutações a cada push custaria ~20 s e faria o
+  build falhar sempre que um trecho mudasse; virou task para decidir.
+- **Actions na v7** (`checkout@v7`, `setup-node@v7`), não v5/v6: todas rodam em
+  Node 24, e as notas das majors não trazem nada que afete este workflow (runner
+  hospedado, `pull_request`/`push`, `cache: npm` explícito).
+
+### O que mudou
+
+- `54091cc` — dois testes em `useGameSession.test.tsx`: o nível escolhido entra
+  no baralho em todo modo e nível (o `<` no lugar de `<=` agora é acusado) e
+  nenhuma gravação do padrão acontece antes da hidratação. O terceiro
+  sobrevivente (fim do baralho sem reembaralhar) já tinha sido coberto em
+  `98f9326`, e esse teste de ordem foi o único que o acusou — o teste "não abre
+  com a última carta" sozinho passa com a mutação.
+- `0c6182e` — `scripts/mutacoes.mjs`, `scripts/mutacoes.test.mjs` (11 testes: a
+  lógica de aplicar/classificar e que as 15 ainda se aplicam ao código atual),
+  `npm run mutacao` e a seção "Teste de mutação" do README.
+- `8848833` — `quality.yml` com `checkout@v7` e `setup-node@v7`.
+
+### Validação
+
+Suíte de 72 para 85 testes; `npm run lint`, `typecheck`, `npm test` e
+`npm run build` limpos, com `docs/` idêntico (nada do bundle mudou). Placar de
+`npm run mutacao`, **15 de 15 mortas**, cada uma pelo primeiro teste que falhou:
+
+| Mutação | Teste que acusa |
+| --- | --- |
+| M01 nível máximo exclusivo | inclui no baralho as cartas do nível escolhido |
+| M02 fim do baralho sem reembaralhar | a virada embaralha de novo em vez de repetir a ordem |
+| M03 sem a trava `hydrated` | nunca grava o estado padrão por cima do salvo |
+| M04 filtro de categorias ignorado | aplica modo, nível, categoria e cartas ocultas |
+| M05 cartas ocultas ignoradas | hidrata o estado salvo e monta o baralho |
+| M06 nível ignorado | hidrata o estado salvo e monta o baralho |
+| M07 cursor passa do fim | percorre cada carta uma vez antes de reembaralhar |
+| M08 remover jogador mantém o placar | normaliza jogadores, pontua e remove o score junto |
+| M09 placar negativo | normaliza jogadores, pontua e remove o score junto |
+| M10 `{p}` e `{p2}` iguais | sorteia pessoas diferentes para `{p}` e `{p2}` |
+| M11 exportação sem categorias | exporta os dados editáveis e importa estado válido |
+| M12 reset sem limpar o storage | restaura todos os defaults e limpa as chaves |
+| M13 carta sem categoria | só usa níveis e categorias declarados na taxonomia |
+| M14 carta com texto cortado | não publica carta com texto cortado no meio |
+| M15 `{p}` no Mais Provável | não nomeia ninguém no Mais Provável |
+
+O workflow `Quality` com as v7 (run `40281007068`) passou em todos os passos e
+**sem a anotação de Node 20**; o run anterior, com as v4 (`40280939251`), passou
+com ela. Sobra a anotação do rótulo `ubuntu-latest` (migra para o Ubuntu 26 em
+19/10), que é outro assunto; o `pages-build-deployment` é um workflow gerido
+pelo GitHub e tem a própria anotação de Node 20 (`actions/upload-artifact@v4`),
+que este repositório não controla.
+
+### Limitações
+
+- O placar mede **15 regras**, não cobertura: regra que não está na lista não é
+  medida. Cada mutação foi morta por um teste de asserção, mas a mensagem do
+  placar mostra só o primeiro teste que falhou, não todos.
+- A trava `hydrated` foi validada pela causa, não pelo StrictMode real (ver acima).
+- O runner do GitHub (Linux, Node 24) roda a suíte e o gate, mas não as
+  mutações: `npm run mutacao` só foi executado neste computador (Windows, Node 25).

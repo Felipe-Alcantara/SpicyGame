@@ -190,7 +190,15 @@ Medido no build, no celular (390×844):
 **Encaminhamento:** task nova (Média). O teste em aparelho físico continua na
 task de Mobile já aberta.
 
-### P2 — Três regras críticas sem teste que as proteja
+### P2 — Três regras críticas sem teste que as proteja · **resolvido em 26/10**
+
+> **Atualização de 26/10/2026.** As três mutações passaram a ser mortas
+> (`98f9326` para o fim do baralho, `54091cc` para o nível e a trava `hydrated`),
+> e a medição virou `npm run mutacao` (`0c6182e`): 15 de 15 mortas em ~20 s.
+> As 15 mutações foram reconstruídas a partir das regras descritas aqui, porque o
+> script original não foi guardado. O `Quality` passou a usar `checkout@v7` e
+> `setup-node@v7` (`8848833`), sem a anotação de Node 20. O texto abaixo é o
+> diagnóstico original.
 
 Das 15 mutações, estas passam por toda a suíte:
 
